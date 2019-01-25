@@ -3,6 +3,7 @@
 
 typedef u32 Layer;
 
+ShapeID _default_rect;
 struct Shape
 {
 	ShapeID id;
@@ -132,12 +133,12 @@ void center(BodyID id)
 //
 
 // Create a new body that can be simulated.
-BodyID create_body(PhysicsWorld *world, ShapeID shape_id, EntityID owner, 
-		u32 layer, f32 mass, f32 bounce=0.1f, f32 damping=0.1f, bool trigger=false);
-BodyID create_body(ShapeID shape_id, EntityID owner, 
-		u32 layer, f32 mass, f32 bounce=0.1f, f32 damping=0.1f, bool trigger=false)
+BodyID create_body(PhysicsWorld *world, u32 layer, f32 mass, 
+		f32 bounce=0.1f, f32 damping=0.1f, bool trigger=false);
+BodyID create_body(u32 layer, f32 mass, 
+		f32 bounce=0.1f, f32 damping=0.1f, bool trigger=false)
 {
-	return create_body(game.world, shape_id, owner, layer, mass, bounce, damping, trigger);
+	return create_body(game.world, layer, mass, bounce, damping, trigger);
 }
 
 // Free a bodies resources.
@@ -155,11 +156,13 @@ Body *find_body_ptr(BodyID id)
 }
 
 // Bind the body and the enitity to use the same position.
+#if 0
 void bind_body(PhysicsWorld *world, Vec2 *owner, BodyID body_id);
 void bind_body(EntityID entity_id, BodyID body_id)
 {
 	return bind_body(game.world, entity_id, body_id);
 }
+#endif
 
 // 
 // Debug
