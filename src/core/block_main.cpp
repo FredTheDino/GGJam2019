@@ -54,6 +54,7 @@
 
 #include "../game/assets.cpp"
 #include "../game/player.cpp"
+#include "../game/shoot.cpp"
 #include "../game/level_loader.cpp"
 
 void initalize_libraries()
