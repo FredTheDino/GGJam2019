@@ -52,6 +52,8 @@
 
 #include "block_physics.cpp"
 
+#include "../game/player.cpp"
+
 void initalize_libraries()
 {
 	//
