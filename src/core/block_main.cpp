@@ -135,6 +135,9 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+	load_assets();
+	Player player = create_player();
+
 	// 
 	// Graphcis
 	//
@@ -208,8 +211,9 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
-			f32 scale = 0.5f;
-			f32 rotation = 0.0f; //game.clock.time;
+
+			draw_sprite(find_asset(pixel).texture, player.body_id->pos, 10, 0);
+
 
 			// Debug draw the physics
 			debug_draw_world();
