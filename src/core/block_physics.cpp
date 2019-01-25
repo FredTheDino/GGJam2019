@@ -12,6 +12,14 @@ PhysicsWorld initalize_world()
 	world.uid_counter = 32;
 	
 	world.sorting_axis = V2(1.0, 0.0); 
+
+	List<Vec2> points = create_list<Vec2>(4);
+	points.append(V2(-0.5f,  0.5f));
+	points.append(V2( 0.5f,  0.5f));
+	points.append(V2( 0.5f, -0.5f));
+	points.append(V2(-0.5f, -0.5f));
+	_default_rect = register_shape(&world, points);
+
 	// The sorting axis can be changed if you
 	// feel the engine is doing unnessecary
 	// collision checks.
@@ -216,20 +224,21 @@ Limit project_body(PhysicsWorld *world, BodyID id, Vec2 axis)
 	return {};
 }
 
+#if 0
 void bind_body(PhysicsWorld *world, Vec2 *pos, BodyID body_id)
 {
 	find_body_ptr(body_id)->owner = pos;
 }
+#endif
 
-BodyID create_body(PhysicsWorld *world, ShapeID shape_id, EntityID owner, 
-		u32 layer, f32 mass, f32 bounce, f32 damping, bool trigger)
+BodyID create_body(PhysicsWorld *world, u32 layer, 
+		f32 mass, f32 bounce, f32 damping, bool trigger)
 {
 	Body body = {};
 	body.scale = V2(1, 1);
 	body.id = new_body_id();
 	body.damping = damping;
-	body.shape = shape_id;
-	body.owner = owner;
+	body.shape = _default_rect;
 	body.trigger = trigger;
 	body.bounce = bounce;
 	body.layer = layer;
@@ -246,7 +255,6 @@ BodyID create_body(PhysicsWorld *world, ShapeID shape_id, EntityID owner,
 	world->limits.append(limit);
 
 	world->bodies[body.id.pos] = body;
-	bind_body(owner, body.id);
 	return body.id;
 }
 
@@ -568,7 +576,7 @@ void update_world(PhysicsWorld *world, f32 delta)
 			}
 			//ASSERT(body);
 
-#if 1
+#if 0
 			Vec2 *owner = find_entity_ptr(body->owner).owner;
 			if (owner)
 			{
