@@ -53,6 +53,7 @@
 #include "block_physics.cpp"
 
 #include "../game/player.cpp"
+#include "../game/assets.cpp"
 
 void initalize_libraries()
 {
@@ -212,7 +213,7 @@ void run()
 			frame(game.clock);
 
 
-			draw_sprite(find_asset(pixel).texture, player.body_id->pos, 10, 0);
+			draw_sprite(find_asset(pixel).texture, player.body_id->position, V2(10, 10), 0);
 
 
 			// Debug draw the physics
