@@ -1,6 +1,8 @@
 
 #define PLAYER_ACCELERATION 300
 #define PLAYER_MAX_SPEED 5
+#define PLAYER_JUMP_SPEED 3
+#define GRAVITY 2
 
 struct Player {
 	BodyID body_id;
@@ -27,6 +29,10 @@ void player_update(Player *p, f32 delta)
 	else {
 		vel.x = 0;
 	}
+
+	// Update gravity
+	vel.y -= GRAVITY * delta;
+
 	p->body_id->velocity = vel;
 }
 
@@ -42,9 +48,9 @@ void player_draw()
 
 void player_jump(Player *p) 
 {
-	if (!p->in_air) 
+	if (!(p->in_air) && pressed("jump")) 
 	{
-
+		p->body_id->velocity.y = PLAYER_JUMP_SPEED;
 	}
 }
 

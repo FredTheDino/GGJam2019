@@ -188,9 +188,11 @@ void run()
 	add_binding(input, KEY(s),  1, "y-move");
 	add_binding(input, CAXIS(LEFTY), "y-move");
 
+	add_input(input, "jump");
+	add_binding(input, KEY(SPACE), "jump");
+
 	add_input(input, "shoot");
-	add_binding(input, KEY(SPACE), "shoot");
-	add_binding(input, CBUTTON(Y), "shoot");
+	add_binding(input, KEY(c), "shoot");
 
 	add_input(input, "reset_size");
 	add_binding(input, KEY(g), "reset_size");
@@ -221,6 +223,7 @@ void run()
 			}
 
 			player_update(&player, game.clock.delta);
+			player_jump(&player);
 			
 			// Physics update.
 			update_world(game.clock.delta);
