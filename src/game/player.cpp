@@ -1,4 +1,7 @@
 
+#define PLAYER_SPEED 30
+#define PLAYER_MAX_SPEED 5
+
 struct Player {
 	BodyID body_id;
 	bool in_air;
@@ -16,7 +19,15 @@ Player create_player()
 
 void player_update(Player *p, f32 delta) 
 {
-
+	Vec2 vel = p->body_id->velocity;
+	if (value("x-move")) {
+		vel.x += value("x-move") * delta * PLAYER_SPEED;
+		vel.x = clamp((f32) -PLAYER_MAX_SPEED, (f32) PLAYER_MAX_SPEED, (f32) vel.x);
+	}
+	else {
+		vel.x = 0;
+	}
+	p->body_id->velocity = vel;
 }
 
 void player_shoot(Player *p, s32 direction) 

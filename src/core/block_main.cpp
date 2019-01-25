@@ -163,7 +163,7 @@ void run()
 	Camera main_camera = {};
 	game.camera = &main_camera;
 	game.camera->shake_stress = 0.05f;
-	game.camera->zoom = 0.1f;
+	game.camera->zoom = 1;
 	game.camera->rotation = 0.0f;
 
 	// 
@@ -215,6 +215,13 @@ void run()
 
 		// Update
 		{
+
+			if (pressed("quit")) {
+				game.running = 0;
+			}
+
+			player_update(&player, game.clock.delta);
+			
 			// Physics update.
 			update_world(game.clock.delta);
 		}
@@ -225,7 +232,7 @@ void run()
 			frame(game.clock);
 
 
-			draw_sprite(find_asset(pixel).texture, player.body_id->position, V2(10, 10), 0);
+			draw_sprite(find_asset(pixel).texture, player.body_id->position, V2(1, 1), 0);
 
 
 			// Debug draw the physics
