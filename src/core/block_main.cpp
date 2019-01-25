@@ -135,6 +135,19 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+	{
+		List<Vec2> points = create_list<Vec2>(4);
+
+		points.append(V2(-0.5f,  0.5f));
+		points.append(V2( 0.5f,  0.5f));
+		points.append(V2( 0.5f, -0.5f));
+		points.append(V2(-0.5f, -0.5f));
+
+		_default_rect = register_shape(points);
+
+		destroy_list(&points);
+	}
+
 	// 
 	// Graphcis
 	//
