@@ -6,7 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-GLuint filter = GL_LINEAR;
+GLuint filter = GL_NEAREST;
 Asset load_texture(const char *path)
 {
 	Texture texture = {};
