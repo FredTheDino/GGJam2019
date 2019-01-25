@@ -1,0 +1,37 @@
+{ "height":50,
+ "infinite":true,
+ "layers":[
+        {
+         "draworder":"topdown",
+         "id":2,
+         "name":"Object Layer 1",
+         "objects":[
+                {
+                 "height":15.3103124895335,
+                 "id":2,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":261.723548916502,
+                 "x":-120,
+                 "y":16
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }],
+ "nextlayerid":3,
+ "nextobjectid":3,
+ "orientation":"orthogonal",
+ "renderorder":"left-down",
+ "tiledversion":"1.2.1",
+ "tileheight":8,
+ "tilesets":[],
+ "tilewidth":8,
+ "type":"map",
+ "version":1.2,
+ "width":50
+}

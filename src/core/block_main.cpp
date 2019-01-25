@@ -53,6 +53,7 @@
 #include "block_physics.cpp"
 
 #include "../game/player.cpp"
+#include "../game/level_loader.cpp"
 
 void initalize_libraries()
 {
@@ -156,6 +157,8 @@ void run()
 
 	Context text_context = initalize_graphics(load_asset(AFT_SHADER, "res/text.glsl"));
 	game.text_context = &text_context;
+
+	level_load("res/simple.json");
 
 	Camera main_camera = {};
 	game.camera = &main_camera;

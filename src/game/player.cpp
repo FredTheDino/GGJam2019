@@ -8,7 +8,7 @@ struct Player {
 };
 
 void player_update(Player *p, f32 delta) {
-	body.
+	//body.
 
 }
 
