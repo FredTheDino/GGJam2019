@@ -1,5 +1,5 @@
 
-#define PLAYER_SPEED 30
+#define PLAYER_ACCELERATION 300
 #define PLAYER_MAX_SPEED 5
 
 struct Player {
@@ -20,9 +20,9 @@ Player create_player()
 void player_update(Player *p, f32 delta) 
 {
 	Vec2 vel = p->body_id->velocity;
-	if (value("x-move")) {
-		vel.x += value("x-move") * delta * PLAYER_SPEED;
-		vel.x = clamp((f32) -PLAYER_MAX_SPEED, (f32) PLAYER_MAX_SPEED, (f32) vel.x);
+	int input_value = value("right") + value("left");
+	if (input_value) {
+		vel.x = PLAYER_MAX_SPEED * sign(input_value);
 	}
 	else {
 		vel.x = 0;
