@@ -53,6 +53,7 @@
 #include "block_physics.cpp"
 
 #include "../game/player.cpp"
+#include "../game/shoot.cpp"
 
 void initalize_libraries()
 {
