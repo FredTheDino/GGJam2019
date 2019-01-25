@@ -216,23 +216,9 @@ Limit project_body(PhysicsWorld *world, BodyID id, Vec2 axis)
 	return {};
 }
 
-void bind_body(PhysicsWorld *world, EntityID entity_id, BodyID body_id)
+void bind_body(PhysicsWorld *world, Vec2 *pos, BodyID body_id)
 {
-#if 0
-	Body *body = find_body_ptr(world, body_id);
-	if (!body) return;
-	Entity *new_owner = find_entity_ptr(entity_id);
-	if (!new_owner) return;
-	Entity *old_owner = find_entity_ptr(body->owner);
-	if (old_owner)
-	{
-		old_owner->body.pos = -1;
-		old_owner->body.uid = -1;
-	}
-
-	body->owner = entity_id;
-	new_owner->body = body_id;
-#endif
+	find_body_ptr(body_id)->owner = pos;
 }
 
 BodyID create_body(PhysicsWorld *world, ShapeID shape_id, EntityID owner, 
@@ -582,12 +568,12 @@ void update_world(PhysicsWorld *world, f32 delta)
 			}
 			//ASSERT(body);
 
-#if 0
-			Entity *entity = find_entity_ptr(body->owner);
-			if (entity)
+#if 1
+			Vec2 *owner = find_entity_ptr(body->owner).owner;
+			if (owner)
 			{
-				body->position = entity->position;
-				body->rotation = entity->rotation;
+				body->position = owner;
+				//body->rotation = entity->rotation;
 			}
 #endif
 
