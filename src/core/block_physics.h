@@ -69,6 +69,8 @@ struct PhysicsWorld
 	s32 bodies_next_free;
 	List<Body> bodies;
 
+	Vec2 *owner;
+
 	List<Limit> limits;
 	
 	Vec2 sorting_axis;
@@ -153,7 +155,7 @@ Body *find_body_ptr(BodyID id)
 }
 
 // Bind the body and the enitity to use the same position.
-void bind_body(PhysicsWorld *world, EntityID entity_id, BodyID body_id);
+void bind_body(PhysicsWorld *world, Vec2 *owner, BodyID body_id);
 void bind_body(EntityID entity_id, BodyID body_id)
 {
 	return bind_body(game.world, entity_id, body_id);
