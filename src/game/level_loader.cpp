@@ -14,7 +14,7 @@ struct Level
 void level_load(const char *path, Player *player, Level *level)
 {
 	using namespace JSON;
-	player = create_player();
+	*player = *create_player();
 	level->map = create_tilemap(spritesheet);
 	level->bodies = create_list<BodyID>(10);
 	const char *file = read_entire_file(path);
