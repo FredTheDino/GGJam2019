@@ -15,6 +15,8 @@
 #pragma warning(pop)
 #endif
 
+#define GRAVITY 20
+
 #include "block_main.h"
 #include "block_id.h"
 #include "block_timer.h"

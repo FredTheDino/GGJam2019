@@ -4,7 +4,6 @@
 #define PLAYER_JUMP_SPEED 7
 #define PLAYER_SHOT_DELAY 0.3f
 #define MAX_KAYOTEE_TIME 1.0f
-#define GRAVITY 20
 
 struct Player {
 	// Body
@@ -24,7 +23,7 @@ struct Player {
 bool player_callback(Body *self, Body *other, Overlap overlap)
 {
 	Player *player = (Player *) self->self;
-	if (dot((self->position - other->position), V2(0, 1)) > 0.8)
+	if (dot(-overlap.normal, V2(0, 1)) > 0.8)
 	{
 		player->jumped = false;
 		player->grounded = true;
@@ -127,3 +126,6 @@ void player_draw(Player *player)
 	draw_sprite(texture, player->body_id->position, player->body_id->scale, 0);
 }
 
+void player_change_weapon(Player *player, ShotKind weapon) {
+	player->weapon = weapon;
+}
