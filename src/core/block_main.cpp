@@ -230,6 +230,15 @@ void run()
 
 		// Update
 		{
+			Particle p = {};
+			p.position = V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 50.0f));
+			p.lifetime = 60;
+			p.from_color = V4(1, 1, 1, 1);
+			p.to_color = V4(1, 1, 1, 1);
+			p.scale = V2(0.1f, 0.1f);
+			p.is_sine = true;
+			p.gravity = GRAVITY/5000.0f;
+			add_particle(&system, p);
 
 			if (pressed("quit")) 
 			{
@@ -238,7 +247,7 @@ void run()
 
 			if (pressed("shoot"))
 			{
-				for (int i=0; i<20; i++)
+				for (int i = 0; i < 20; i++)
 				{
 					Particle p = {};
 					if (player->face_direction > 0)
@@ -267,6 +276,19 @@ void run()
 				}
 			}
 
+			if (player->bounced)
+			{
+				Particle p = {};
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -0.5f, 0.5f), 0);
+				p.lifetime = 10;
+				p.from_color = V4(0, 1, 0, 1);
+				p.to_color = V4(0, 1, 0, 1);
+				p.linear_velocity = V2(0, 0);
+				p.scale = V2(0.1f, 0.1f);
+				p.gravity = GRAVITY/150.0f;
+				add_particle(&system, p);
+			}
+
 			if (pressed("jump"))
 			{
 				for (int i = 0; i < 20; i++)
@@ -285,7 +307,7 @@ void run()
 
 			if (pressed("jump")) 
 			{
-				for (int i=0; i<15; i++)
+				for (int i = 0; i < 15; i++)
 				{
 					Particle p = {};
 					p.position = player->body_id->position;

@@ -13,6 +13,7 @@ struct Particle
 	f32 rotation;
 	Vec2 position;
 
+	bool is_sine;
 	f32 angular_velocity;
 	Vec2 linear_velocity;
 
@@ -79,7 +80,7 @@ void update_particles(ParticleSystem *system, f32 delta)
 
 		p->linear_velocity += gravity * p->gravity * delta;
 		p->position += p->linear_velocity * delta;
-
+		if (p->is_sine) {p->linear_velocity.x = sin(p->time)*delta*30;}
 		p->rotation += p->angular_velocity * delta;
 	}
 }
