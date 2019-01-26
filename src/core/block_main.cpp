@@ -53,6 +53,7 @@
 #include "block_physics.cpp"
 
 #include "../game/assets.cpp"
+#include "../game/shoot.h"
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
 #include "../game/level_loader.cpp"
@@ -152,7 +153,9 @@ void run()
 	}
 
 	load_assets();
-	Player player = level_load("res/simple.json");
+	Player *player = level_load("res/simple.json");
+
+	List<Shot*> shots = create_list<Shot*>(5); 
 
 	// 
 	// Graphcis
@@ -227,7 +230,13 @@ void run()
 				game.running = 0;
 			}
 
-			player_update(&player, game.clock.delta);
+			player_update(player, game.clock.delta);
+			update_shots(&shots, game.clock.delta);
+
+			// Handle input
+			if (pressed("shoot")) {
+				player_shoot(player, &shots);
+			}
 			
 			// Physics update.
 			update_world(game.clock.delta);
@@ -238,8 +247,8 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
-
 			player_draw(player);
+			shots_draw(&shots);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));

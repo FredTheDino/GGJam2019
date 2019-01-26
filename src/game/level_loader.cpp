@@ -10,10 +10,10 @@ struct Level
 	List<BodyID> bodies;
 };
 
-Player level_load(const char *path)
+Player *level_load(const char *path)
 {
 	using namespace JSON;
-	Player player = create_player();
+	Player *player = create_player();
 	Level level;
 	level.bodies = create_list<BodyID>(10);
 	const char *file = read_entire_file(path);
@@ -29,15 +29,13 @@ Player level_load(const char *path)
 		dim.y *= -1;
 		if (dim.x == 0 && dim.y == 0)
 		{
-			player.body_id->position = pos;
-			printf("player @ x: %f, y %f\n", pos.x, pos.y);
+			player->body_id->position = pos;
 		}
 		else
 		{
 			BodyID id = create_body(0xFF, 0);
 			id->position = pos + dim / 2;
 			id->scale = dim;
-			printf("block @ x: %f, y %f, dx: %f, dy %f\n", pos.x, pos.y, dim.x, dim.y);
 		}
 	}
 	return player;
