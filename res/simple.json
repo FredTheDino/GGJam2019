@@ -7,17 +7,6 @@
          "name":"Object Layer 1",
          "objects":[
                 {
-                 "height":15.3103124895335,
-                 "id":2,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":261.723548916502,
-                 "x":-120,
-                 "y":16
-                }, 
-                {
                  "height":0,
                  "id":4,
                  "name":"player",
@@ -26,8 +15,30 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":3.25330111331665,
-                 "y":68.1798567359972
+                 "x":8,
+                 "y":-8
+                }, 
+                {
+                 "height":8,
+                 "id":7,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":86.5914343983684,
+                 "x":0,
+                 "y":0
+                }, 
+                {
+                 "height":24,
+                 "id":16,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":24,
+                 "x":-8,
+                 "y":8
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -36,7 +47,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":5,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.2.1",

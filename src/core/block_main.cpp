@@ -208,6 +208,7 @@ void run()
 	add_input(input, "show");
 	add_binding(input, KEY(q), "show");
 
+	update_game_clock(&game.clock);
 	game.running = 1;
 	while (game.running)
 	{
@@ -239,6 +240,9 @@ void run()
 
 
 			player_draw(player);
+			
+			debug_line(V2(1, 1), V2(-1, -1));
+			debug_line(V2(-1, 1), V2(1, -1));
 
 			// Debug draw the physics
 			debug_draw_world();
@@ -260,6 +264,6 @@ void run()
 	destroy_temp_memory();
 #endif
 
-	debug_check_memory();
+	// debug_check_memory();
 }
 
