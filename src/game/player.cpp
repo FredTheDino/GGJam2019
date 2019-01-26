@@ -4,7 +4,6 @@
 #define PLAYER_JUMP_SPEED 7
 #define PLAYER_SHOT_DELAY 0.3f
 #define MAX_KAYOTEE_TIME 1.0f
-#define GRAVITY 20
 
 struct Player {
 	// Body
