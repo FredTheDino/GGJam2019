@@ -36,6 +36,7 @@ Player *create_player()
 	player->body_id = create_body(0xff, 1, 0);
 	player->body_id->self = player;
 	player->body_id->overlap = player_callback;
+	player->body_id->scale = V2(1,1);
 	player->shot_time = 0;
 	player->face_direction = 1;
 	return player;
@@ -103,7 +104,7 @@ void player_update(Player *player, f32 delta)
 	game.camera->position = body->position;
 }
 
-void player_shoot(Player *player, List<Shot*> *shots, s32 direction) 
+void player_shoot(Player *player, List<Shot*> *shots) 
 {
 	if (player->shot_time > PLAYER_SHOT_DELAY)
 	{
@@ -115,6 +116,6 @@ void player_shoot(Player *player, List<Shot*> *shots, s32 direction)
 void player_draw(Player *player) 
 {
 	Texture texture = find_asset(pixel).texture;
-	draw_sprite(texture, player->body_id->position, V2(1, 1), 0);
+	draw_sprite(texture, player->body_id->position, player->body_id->scale, 0);
 }
 

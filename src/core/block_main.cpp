@@ -235,7 +235,7 @@ void run()
 
 			// Handle input
 			if (pressed("shoot")) {
-				player_shoot(player, &shots, 1);
+				player_shoot(player, &shots);
 			}
 			
 			// Physics update.
@@ -247,8 +247,8 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
-
 			player_draw(player);
+			shots_draw(&shots);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
