@@ -13,13 +13,6 @@ PhysicsWorld initalize_world()
 	
 	world.sorting_axis = V2(1.0, 0.0); 
 
-	List<Vec2> points = create_list<Vec2>(4);
-	points.append(V2(-0.5f,  0.5f));
-	points.append(V2( 0.5f,  0.5f));
-	points.append(V2( 0.5f, -0.5f));
-	points.append(V2(-0.5f, -0.5f));
-	_default_rect = register_shape(&world, points);
-
 	// The sorting axis can be changed if you
 	// feel the engine is doing unnessecary
 	// collision checks.

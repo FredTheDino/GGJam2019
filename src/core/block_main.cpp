@@ -52,7 +52,10 @@
 
 #include "block_physics.cpp"
 
+#include "../game/assets.cpp"
 #include "../game/player.cpp"
+#include "../game/shoot.cpp"
+#include "../game/level_loader.cpp"
 
 void initalize_libraries()
 {
@@ -120,7 +123,7 @@ void destroy_libraries()
 void update_game_clock(Clock *clock)
 {
 	f64 current_time = MS_TO_SEC(SDL_GetTicks());
-	clock->delta = current_time - clock->time;
+	clock->delta = maximum((f32) (current_time - clock->time), 1.0f / 30.0f);
 	clock->time = current_time;
 }
 
@@ -135,6 +138,22 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+	{ 
+		List<Vec2> points = create_list<Vec2>(4);
+
+		points.append(V2(-0.5f,  0.5f));
+		points.append(V2( 0.5f,  0.5f));
+		points.append(V2( 0.5f, -0.5f));
+		points.append(V2(-0.5f, -0.5f));
+
+		_default_rect = register_shape(points);
+
+		destroy_list(&points);
+	}
+
+	load_assets();
+	Player player = level_load("res/simple.json");
+
 	// 
 	// Graphcis
 	//
@@ -144,10 +163,11 @@ void run()
 	Context text_context = initalize_graphics(load_asset(AFT_SHADER, "res/text.glsl"));
 	game.text_context = &text_context;
 
+
 	Camera main_camera = {};
 	game.camera = &main_camera;
 	game.camera->shake_stress = 0.05f;
-	game.camera->zoom = 0.1f;
+	game.camera->zoom = 0.1;
 	game.camera->rotation = 0.0f;
 
 	// 
@@ -162,19 +182,21 @@ void run()
 	add_binding(input, KEY(e), "camera_shake");
 	add_binding(input, CBUTTON(X), "camera_shake");
 
-	add_input(input, "x-move");
-	add_binding(input, KEY(d),  1, "x-move");
-	add_binding(input, KEY(a), -1, "x-move");
-	add_binding(input, CAXIS(LEFTX), "x-move");
+	add_input(input, "right");
+	add_binding(input, KEY(d),  1, "right");
+	add_input(input, "left");
+	add_binding(input, KEY(a), -1, "left");
 
 	add_input(input, "y-move");
 	add_binding(input, KEY(w), -1, "y-move");
 	add_binding(input, KEY(s),  1, "y-move");
 	add_binding(input, CAXIS(LEFTY), "y-move");
 
+	add_input(input, "jump");
+	add_binding(input, KEY(SPACE), "jump");
+
 	add_input(input, "shoot");
-	add_binding(input, KEY(SPACE), "shoot");
-	add_binding(input, CBUTTON(Y), "shoot");
+	add_binding(input, KEY(c), "shoot");
 
 	add_input(input, "reset_size");
 	add_binding(input, KEY(g), "reset_size");
@@ -186,6 +208,7 @@ void run()
 	add_input(input, "show");
 	add_binding(input, KEY(q), "show");
 
+	update_game_clock(&game.clock);
 	game.running = 1;
 	while (game.running)
 	{
@@ -199,6 +222,13 @@ void run()
 
 		// Update
 		{
+
+			if (pressed("quit")) {
+				game.running = 0;
+			}
+
+			player_update(&player, game.clock.delta);
+			
 			// Physics update.
 			update_world(game.clock.delta);
 		}
@@ -208,8 +238,11 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
-			f32 scale = 0.5f;
-			f32 rotation = 0.0f; //game.clock.time;
+
+			player_draw(player);
+			
+			debug_line(V2(1, 1), V2(-1, -1));
+			debug_line(V2(-1, 1), V2(1, -1));
 
 			// Debug draw the physics
 			debug_draw_world();
@@ -231,6 +264,6 @@ void run()
 	destroy_temp_memory();
 #endif
 
-	debug_check_memory();
+	// debug_check_memory();
 }
 

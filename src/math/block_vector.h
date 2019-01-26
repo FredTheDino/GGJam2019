@@ -98,7 +98,7 @@ Vec2 normalize(Vec2 a)
 	return a / length(a);
 }
 
-Vec2 hadamard(Vec2 a, Vec2 b)
+Vec2 hadamard(const Vec2 a, const Vec2 b)
 {
 	return {a.x * b.x, a.y * b.y};
 }

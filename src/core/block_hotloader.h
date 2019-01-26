@@ -69,7 +69,7 @@ struct Font
 };
 
 struct LevelObject;
-struct Level
+struct Level_
 {
 	// Maybe nothing in here?
 	int _;
@@ -105,7 +105,7 @@ struct Asset
 		SpriteAtlas atlas;
 		SoundBuffer sound;
 		Font font;
-		Level level;
+		Level_ level;
 	};
 };
 
