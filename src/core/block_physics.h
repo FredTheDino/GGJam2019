@@ -51,6 +51,7 @@ struct Body
 	bool trigger;
 	PhysicsCallback overlap;
   void *self;
+  int type;
 };
 
 

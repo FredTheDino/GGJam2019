@@ -16,6 +16,10 @@
 #endif
 
 #define GRAVITY 20
+#define PLAYER_TYPE 1
+#define SHOT_TYPE 2
+#define JELLO_TYPE 3
+#define PICKUP_TYPE 4
 
 #include "block_main.h"
 #include "block_id.h"
@@ -60,6 +64,7 @@
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
 #include "../game/jello.cpp"
+#include "../game/pickup.cpp"
 #include "../game/level_loader.cpp"
 
 void initalize_libraries()
@@ -161,6 +166,10 @@ void run()
 
 	List<Shot*> shots = create_list<Shot*>(5); 
 	List<Jello*> jellos = create_list<Jello*>(20); 
+	List<Pickup*> pickups = create_list<Pickup*>(10); 
+
+	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
+	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
 
 	RandomState rng = seed(4);
 
@@ -180,6 +189,7 @@ void run()
 	game.camera->rotation = 0.0f;
 
 	ParticleSystem system = create_particle_system(pixel);
+	float snow_time = 0;
 	// 
 	// Input
 	//
@@ -232,15 +242,19 @@ void run()
 
 		// Update
 		{
-			Particle p = {};
-			p.position = V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 50.0f));
-			p.lifetime = 60;
-			p.from_color = V4(1, 1, 1, 1);
-			p.to_color = V4(1, 1, 1, 1);
-			p.scale = V2(0.1f, 0.1f);
-			p.is_sine = true;
-			p.gravity = GRAVITY/5000.0f;
-			add_particle(&system, p);
+			snow_time += game.clock.delta;
+			if (snow_time > 0.20) {
+				snow_time = 0;
+				Particle p = {};
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 30.0f));
+				p.lifetime = 60;
+				p.from_color = V4(1, 1, 1, 0.8f);
+				p.to_color = V4(1, 1, 1, 0.8f);
+				p.scale = V2(0.1f, 0.1f);
+				p.is_sine = true;
+				p.gravity = GRAVITY/5000.0f;
+				add_particle(&system, p);
+			}
 
 			if (pressed("quit")) 
 			{
@@ -365,6 +379,7 @@ void run()
 			draw_particles(&system);
 			player_draw(player);
 			shots_draw(&shots);
+			pickups_draw(&pickups);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));

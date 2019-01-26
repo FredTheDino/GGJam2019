@@ -2,7 +2,11 @@ bool shot_on_collision(Body *self, Body *other, Overlap overlap)
 {
 	ASSERT(self->self);
     Shot *shot = (Shot *) self->self;
-	if (shot->is_destroyed || other->inverse_mass == JELLO_INV_MASS)
+
+	if (other->type == PICKUP_TYPE)
+		return false;
+
+	if (shot->is_destroyed || other->type == JELLO_TYPE)
 		return true;
 
     switch (shot->shot_kind)
@@ -28,6 +32,7 @@ Shot *create_shot(Player *player, ShotKind shot_kind, s32 direction, List<Jello*
 	body_id->position = player->body_id->position + V2(direction, 0);
 	body_id->scale = V2(0.5f, 0.5f);
 	body_id->overlap = shot_on_collision;
+	body_id->type = SHOT_TYPE;
     Shot *shot = push_struct(Shot);
     shot->body_id = body_id;
     shot->shot_kind = shot_kind;
