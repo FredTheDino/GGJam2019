@@ -60,6 +60,9 @@
 #include "block_physics.cpp"
 
 #include "../game/assets.cpp"
+ParticleSystem particle_system = create_particle_system(pixel);
+RandomState rnd = seed(4);
+
 #include "../game/shoot.h"
 #include "../game/jello.h"
 #include "../game/player.cpp"
@@ -169,8 +172,6 @@ void run()
 	List<Jello*> jellos = create_list<Jello*>(20); 
 	List<Pickup*> pickups = create_list<Pickup*>(10); 
 
-	RandomState rng = seed(4);
-
 	Level level;
 	Player *player = level_load("res/map0.json", &level);
 
@@ -192,7 +193,6 @@ void run()
 	game.camera->zoom = 0.08;
 	game.camera->rotation = 0.0f;
 
-	ParticleSystem system = create_particle_system(pixel);
 	float snow_time = 0;
 	// 
 	// Input
@@ -250,14 +250,14 @@ void run()
 			if (snow_time > 0.20) {
 				snow_time = 0;
 				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 30.0f));
+				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -10.0f, 10.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
 				p.lifetime = 60;
 				p.from_color = V4(1, 1, 1, 0.8f);
 				p.to_color = V4(1, 1, 1, 0.8f);
 				p.scale = V2(0.1f, 0.1f);
 				p.is_sine = true;
 				p.gravity = GRAVITY/5000.0f;
-				add_particle(&system, p);
+				add_particle(&particle_system, p);
 			}
 
 			if (pressed("quit")) 
@@ -281,48 +281,35 @@ void run()
 					p.lifetime = 1;
 					switch(player->weapon)
 					{
-						case JELLO: p.from_color = V4(0, 1, 0, 0.5f);
-									break;
-						case CARROT: p.from_color = V4(0.98f, 0.61f, 0.12f, 0.5f);
-									 break;
-						case ONION: p.from_color = V4(0.8f, 0.6f, 0, 0.5f);
-									break;
+						case JELLO: 
+							p.from_color = V4(0, 1, 0, 0.5f);
+							break;
+						case CARROT:
+							p.from_color = V4(0.98f, 0.61f, 0.12f, 0.5f);
+							break;
+						case ONION: 
+							p.from_color = V4(0.8f, 0.6f, 0, 0.5f);
+							break;
 					}
 					p.to_color = V4(0, 0, 0, 0);
-					p.angular_velocity = random_real_in_range(&rng, -1.0f, 1.0f);
-					p.linear_velocity = random_vec2(&rng, V2(-0.5f, -0.5f), V2(0.5f, 0.5f));
+					p.angular_velocity = random_real_in_range(&rnd, -1.0f, 1.0f);
+					p.linear_velocity = random_vec2(&rnd, V2(-0.5f, -0.5f), V2(0.5f, 0.5f));
 					p.scale = V2(0.2f, 0.2f);
-					add_particle(&system, p);
+					add_particle(&particle_system, p);
 				}
 			}
 
 			if (player->bounced)
 			{
 				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rng, -0.5f, 0.5f), 0);
+				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -0.5f, 0.5f), 0);
 				p.lifetime = 10;
 				p.from_color = V4(0, 1, 0, 1);
 				p.to_color = V4(0, 1, 0, 1);
 				p.linear_velocity = V2(0, 0);
 				p.scale = V2(0.1f, 0.1f);
 				p.gravity = GRAVITY/150.0f;
-				add_particle(&system, p);
-			}
-
-			if (pressed("jump"))
-			{
-				for (int i = 0; i < 20; i++)
-				{
-					Particle p = {};
-					p.position = player->body_id->position;
-					p.lifetime = 10;
-					p.from_color = V4(0, 1, 0, 1);
-					p.to_color = V4(0, 1, 0, 1);
-					p.linear_velocity = random_vec2(&rng, V2(-1, 0.5f), V2(1, 1));
-					p.scale = V2(0.1f, 0.1f);
-					p.gravity = GRAVITY/900.0f;
-					add_particle(&system, p);
-				}
+				add_particle(&particle_system, p);
 			}
 
 			if (pressed("jump")) 
@@ -334,10 +321,10 @@ void run()
 					p.lifetime = 1.5f;
 					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 					p.to_color = V4(1, 1, 1, 0);
-					p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
-					p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.8f, 0.6f));
+					p.angular_velocity = random_real_in_range(&rnd, 0.0f, 1.0f);
+					p.linear_velocity = random_vec2(&rnd, V2(-0.8f, 0.0f), V2(0.8f, 0.6f));
 					p.scale = V2(0.7f, 0.7f);
-					add_particle(&system, p);
+					add_particle(&particle_system, p);
 				}
 			}
 
@@ -348,34 +335,13 @@ void run()
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
-				p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
-				p.linear_velocity = random_vec2(&rng, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
+				p.angular_velocity = random_real_in_range(&rnd, 0.0f, 1.0f);
+				p.linear_velocity = random_vec2(&rnd, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
 				p.scale = V2(0.7f, 0.7f);
-				add_particle(&system, p);
+				add_particle(&particle_system, p);
 			}
 
-			if (value("right"))
-			{
-				Particle p = {};
-				p.position = player->body_id->position;
-				p.lifetime = 2;
-				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
-				p.to_color = V4(1, 1, 1, 0);
-				p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
-				p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.0f, 0.6f));
-				if (value("right"))
-				{
-					p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.0f, 0.6f));
-				}
-				else
-				{
-					p.linear_velocity = random_vec2(&rng, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
-				}
-				p.scale = V2(0.7f, 0.7f);
-				add_particle(&system, p);
-			}
-
-			update_particles(&system, game.clock.delta);
+			update_particles(&particle_system, game.clock.delta);
 			player_update(player, game.clock.delta);
 			update_shots(&shots, game.clock.delta);
 			update_jellos(&jellos, game.clock.delta);
@@ -394,7 +360,7 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
-			draw_particles(&system);
+			draw_particles(&particle_system);
 			player_draw(player);
 			shots_draw(&shots);
 			pickups_draw(&pickups);
