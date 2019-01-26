@@ -127,8 +127,7 @@ void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos)
 
 void player_draw(Player *player) 
 {
-	Texture texture = find_asset(pixel).texture;
-	draw_sprite(texture, player->body_id->position, player->body_id->scale, 0);
+	draw_sprite(64, player->body_id->position);
 }
 
 void player_change_weapon(Player *player, ShotKind weapon) {
