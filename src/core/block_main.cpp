@@ -51,6 +51,7 @@
 #include "block_sprite.cpp"
 #include "block_graphics.cpp"
 #include "block_hotloader.cpp"
+#include "block_tilemap.h"
 
 #include "block_physics.cpp"
 
@@ -143,6 +144,7 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+
 	{ 
 		List<Vec2> points = create_list<Vec2>(4);
 
@@ -157,13 +159,16 @@ void run()
 	}
 
 	load_assets();
-	Player *player = level_load("res/simple.json");
 
 	List<Shot*> shots = create_list<Shot*>(5); 
 	List<Jello*> jellos = create_list<Jello*>(20); 
 
 	RandomState rng = seed(4);
 
+	Level level;
+	Player player;
+	level_load("res/simple.json", &player, &level);
+	
 	// 
 	// Graphcis
 	//
@@ -176,7 +181,7 @@ void run()
 	Camera main_camera = {};
 	game.camera = &main_camera;
 	game.camera->shake_stress = 0.05f;
-	game.camera->zoom = 0.1;
+	game.camera->zoom = 0.08;
 	game.camera->rotation = 0.0f;
 
 	ParticleSystem system = create_particle_system(pixel);
@@ -243,16 +248,16 @@ void run()
 				for (int i=0; i<20; i++)
 				{
 					Particle p = {};
-					if (player->face_direction > 0)
+					if (player.face_direction > 0)
 					{
-						p.position = player->body_id->position + V2(0.5f, 0);
+						p.position = player.body_id->position + V2(0.5f, 0);
 					}
 					else
 					{
-						p.position = player->body_id->position + V2(-0.5f, 0);
+						p.position = player.body_id->position + V2(-0.5f, 0);
 					}
 					p.lifetime = 1;
-					switch(player->weapon)
+					switch(player.weapon)
 					{
 						case JELLO: p.from_color = V4(0, 1, 0, 0.5f);
 									break;
@@ -274,7 +279,7 @@ void run()
 				for (int i=0; i<15; i++)
 				{
 					Particle p = {};
-					p.position = player->body_id->position;
+					p.position = player.body_id->position;
 					p.lifetime = 1.5f;
 					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 					p.to_color = V4(1, 1, 1, 0);
@@ -288,7 +293,7 @@ void run()
 			if (value("left"))
 			{
 				Particle p = {};
-				p.position = player->body_id->position;
+				p.position = player.body_id->position;
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
@@ -301,7 +306,7 @@ void run()
 			if (value("right"))
 			{
 				Particle p = {};
-				p.position = player->body_id->position;
+				p.position = player.body_id->position;
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
@@ -312,13 +317,13 @@ void run()
 			}
 
 			update_particles(&system, game.clock.delta);
-			player_update(player, game.clock.delta);
+			player_update(&player, game.clock.delta);
 			update_shots(&shots, game.clock.delta);
 			update_jellos(&jellos, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
-				player_shoot(player, &shots, &jellos);
+				player_shoot(&player, &shots, &jellos);
 			}
 			
 			// Physics update.
@@ -331,11 +336,13 @@ void run()
 			frame(game.clock);
 
 			draw_particles(&system);
-			player_draw(player);
+			player_draw(&player);
 			shots_draw(&shots);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
+
+			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
 			debug_draw_world();

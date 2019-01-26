@@ -12,6 +12,7 @@ uniform float camera_rotation;
 uniform sampler2D sprite_texture;
 
 // Misc.
+uniform int tilemap;
 uniform vec4 tint;
 uniform float time;
 
@@ -20,6 +21,7 @@ uniform vec2 dim_uv;
 
 #ifdef VERT
 in vec2 in_position;
+in vec2 in_uv;
 out vec2 uv;
 
 vec2 rotate(vec2 p, float angle)
@@ -49,8 +51,15 @@ vec2 project(vec2 p)
 
 void main()
 {
-	uv = vec2(in_position.x, in_position.y) * 0.5 + vec2(0.5, 0.5);
-	uv = min_uv + vec2(dim_uv.x * uv.x, dim_uv.y * uv.y);
+	if (tilemap == 1)
+	{
+		uv = in_uv;
+	}
+	else
+	{
+		uv = vec2(in_position.x, in_position.y) * 0.5 + vec2(0.5, 0.5);
+		uv = min_uv + vec2(dim_uv.x * uv.x, dim_uv.y * uv.y);
+	}
 	vec2 world_position = transform(in_position);
 	vec2 projected_position = project(vec2(world_position.x, world_position.y));
 	gl_Position = vec4(projected_position.x, projected_position.y, 0.0, 1.0);
@@ -63,7 +72,14 @@ in vec2 uv;
 out vec4 out_color;
 void main()
 {
-	out_color = vec4(texture(sprite_texture, uv).xyz, 1.0) * tint;
+	if (tilemap == 1)
+	{
+		out_color = texture(sprite_texture, uv).xyzw * tint;
+	}
+	else
+	{
+		out_color = vec4(texture(sprite_texture, uv).xyz, 1.0) * tint;
+	}
 }
 
 #endif
