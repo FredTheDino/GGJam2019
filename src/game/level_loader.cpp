@@ -44,8 +44,6 @@ Player *level_load(const char *path, Level *level)
 		}
 	}
 	objects = value["layers"][(u32) 1]["chunks"];
-	f32 w = (1.0f / 32.0f);
-	f32 h = (1.0f / 32.0f);
 	List<Vec4> verts = create_list<Vec4>(16*16*4);
 	for (u32 i = 0; i < objects.length(); i++) 
 	{
@@ -61,13 +59,16 @@ Player *level_load(const char *path, Level *level)
 			tile--;
 			u32 x = j % width;
 			u32 y = j / width;
+			Rect r = SPRITE(tile);
+#if 0
 			f32 u = (tile % 32) / 32.0f;
-			f32 v = (tile / 32) / 32.0f;
+			f32 v = (tile / 32) / 32.0f;/ 32.0f;
+#endif
 
-			verts.append(V4(x    , y    , u    , v));
-			verts.append(V4(x    , y + 1, u    , v + h));
-			verts.append(V4(x + 1, y + 1, u + w, v + h));
-			verts.append(V4(x + 1, y    , u + w, v));
+			verts.append(V4(x    , y    , r.x      , r.y));
+			verts.append(V4(x    , y + 1, r.x      , r.y + r.h));
+			verts.append(V4(x + 1, y + 1, r.x + r.w, r.y + r.h));
+			verts.append(V4(x + 1, y    , r.x + r.w, r.y));
 		}
 		add_chunk(&level->map, p, verts);
 	}

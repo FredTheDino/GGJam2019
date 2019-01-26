@@ -4,6 +4,8 @@ AssetID spritesheet;
 AssetID audio_pew;
 AssetID audio_splat;
 
+#define SPRITE(id) generate_sprite(id, 32, 32)
+
 void load_assets() {
     // Textures
 	pixel       = load_asset(AFT_TEXTURE,   "res/simple.png");
