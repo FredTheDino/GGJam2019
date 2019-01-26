@@ -9,6 +9,7 @@ bool pickup_on_collision(Body *self, Body *other, Overlap overlap) {
 	if (other->type == PLAYER_TYPE) {
 		Player *player = (Player*)other->self;
 		player->weapon = pickup->weapon;
+        play_sound_perturbed(audio_pickup, 1, 1, 0.25, 0.25);
 	}
 	return false;
 }

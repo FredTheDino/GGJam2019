@@ -2,6 +2,7 @@
 AssetID pixel;
 AssetID audio_pew;
 AssetID audio_splat;
+AssetID audio_pickup;
 
 void load_assets() {
     // Textures
