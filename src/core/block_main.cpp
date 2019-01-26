@@ -189,6 +189,7 @@ void run()
 	game.camera->rotation = 0.0f;
 
 	ParticleSystem system = create_particle_system(pixel);
+	float snow_time = 0;
 	// 
 	// Input
 	//
@@ -241,6 +242,19 @@ void run()
 
 		// Update
 		{
+			snow_time += game.clock.delta;
+			if (snow_time > 0.20) {
+				snow_time = 0;
+				Particle p = {};
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 30.0f));
+				p.lifetime = 60;
+				p.from_color = V4(1, 1, 1, 0.8f);
+				p.to_color = V4(1, 1, 1, 0.8f);
+				p.scale = V2(0.1f, 0.1f);
+				p.is_sine = true;
+				p.gravity = GRAVITY/5000.0f;
+				add_particle(&system, p);
+			}
 
 			if (pressed("quit")) 
 			{
@@ -249,7 +263,7 @@ void run()
 
 			if (pressed("shoot"))
 			{
-				for (int i=0; i<20; i++)
+				for (int i = 0; i < 20; i++)
 				{
 					Particle p = {};
 					if (player->face_direction > 0)
@@ -278,9 +292,38 @@ void run()
 				}
 			}
 
+			if (player->bounced)
+			{
+				Particle p = {};
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -0.5f, 0.5f), 0);
+				p.lifetime = 10;
+				p.from_color = V4(0, 1, 0, 1);
+				p.to_color = V4(0, 1, 0, 1);
+				p.linear_velocity = V2(0, 0);
+				p.scale = V2(0.1f, 0.1f);
+				p.gravity = GRAVITY/150.0f;
+				add_particle(&system, p);
+			}
+
+			if (pressed("jump"))
+			{
+				for (int i = 0; i < 20; i++)
+				{
+					Particle p = {};
+					p.position = player->body_id->position;
+					p.lifetime = 10;
+					p.from_color = V4(0, 1, 0, 1);
+					p.to_color = V4(0, 1, 0, 1);
+					p.linear_velocity = random_vec2(&rng, V2(-1, 0.5f), V2(1, 1));
+					p.scale = V2(0.1f, 0.1f);
+					p.gravity = GRAVITY/900.0f;
+					add_particle(&system, p);
+				}
+			}
+
 			if (pressed("jump")) 
 			{
-				for (int i=0; i<15; i++)
+				for (int i = 0; i < 15; i++)
 				{
 					Particle p = {};
 					p.position = player->body_id->position;
@@ -294,7 +337,7 @@ void run()
 				}
 			}
 
-			if (value("left"))
+			if (player->grounded && (value("left") || value("right")))
 			{
 				Particle p = {};
 				p.position = player->body_id->position;
@@ -302,20 +345,14 @@ void run()
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
 				p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
-				p.linear_velocity = random_vec2(&rng, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
-				p.scale = V2(0.7f, 0.7f);
-				add_particle(&system, p);
-			}
-
-			if (value("right"))
-			{
-				Particle p = {};
-				p.position = player->body_id->position;
-				p.lifetime = 2;
-				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
-				p.to_color = V4(1, 1, 1, 0);
-				p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
-				p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.0f, 0.6f));
+				if (value("right"))
+				{
+					p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.0f, 0.6f));
+				}
+				else
+				{
+					p.linear_velocity = random_vec2(&rng, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
+				}
 				p.scale = V2(0.7f, 0.7f);
 				add_particle(&system, p);
 			}

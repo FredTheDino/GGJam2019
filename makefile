@@ -18,9 +18,9 @@ $(program_name): $(source_files) $(headers)
 run: $(program_name)
 	./$(program_name)
 
-debug: make
+debug: $(program_name)
 	gdb ./$(program_name)
 
-valgrind: make
+valgrind: $(program_name)
 	kitty gdb $(program_name) &
 	valgrind --vgdb-error=0 --suppressions=useable.supp $(program_name)
