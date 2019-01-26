@@ -29,8 +29,8 @@ struct Context
 };
 
 // Make this into a global struct
-#define MAX_NUM_DEBUG_LINES 2000
-#define MAX_NUM_DEBUG_POINTS 500
+#define MAX_NUM_DEBUG_LINES 10000
+#define MAX_NUM_DEBUG_POINTS 5000
 struct DebugContext
 {
 	bool initalized;
