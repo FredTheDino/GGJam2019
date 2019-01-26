@@ -55,7 +55,6 @@ void player_update(Player *player, f32 delta)
 	//
 	if (!(player->in_air) && pressed("jump")) 
 	{
-		printf("Jumping!");
 		vel.y = PLAYER_JUMP_SPEED;
 	}
 

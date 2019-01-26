@@ -49,6 +49,7 @@
 #include "block_sprite.cpp"
 #include "block_graphics.cpp"
 #include "block_hotloader.cpp"
+#include "block_tilemap.h"
 
 #include "block_physics.cpp"
 
@@ -138,6 +139,7 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+
 	{ 
 		List<Vec2> points = create_list<Vec2>(4);
 
@@ -152,8 +154,11 @@ void run()
 	}
 
 	load_assets();
-	Player player = level_load("res/simple.json");
 
+	Level level;
+	Player player;
+	level_load("res/simple.json", &player, &level);
+	
 	// 
 	// Graphcis
 	//
@@ -167,7 +172,7 @@ void run()
 	Camera main_camera = {};
 	game.camera = &main_camera;
 	game.camera->shake_stress = 0.05f;
-	game.camera->zoom = 0.1;
+	game.camera->zoom = 0.08;
 	game.camera->rotation = 0.0f;
 
 	// 
@@ -243,6 +248,8 @@ void run()
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
+
+			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
 			debug_draw_world();

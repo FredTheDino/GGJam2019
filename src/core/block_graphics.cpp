@@ -75,6 +75,7 @@ void draw_sprite(Context gfx, Texture texture,
 	GLuint program = find_asset(gfx.shader_id).shader.program;
 	glUseProgram(program);
 	bind_texture(texture, 0);
+	glUniform1i(u_loc("tilemap"), 0);
 	glUniform2f(u_loc("min_uv"), region.min.x, region.min.y);
 	glUniform2f(u_loc("dim_uv"), region.dim.x, region.dim.y);
 	glUniform4f(u_loc("tint"), tint.x, tint.y, tint.z, tint.w);
@@ -347,9 +348,9 @@ void draw_text(AssetID font_id, const char *text, Vec2 position, f32 size, Vec4 
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(f32) * 4, (void *) (0));
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(f32) * 2, (void *) (0));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(f32) * 4, (void *) (sizeof(f32) * 2));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(f32) * 2, (void *) (sizeof(f32) * 2));
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
