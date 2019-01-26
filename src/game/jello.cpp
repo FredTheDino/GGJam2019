@@ -2,7 +2,8 @@
 
 bool jello_on_collision(Body *self, Body *other, Overlap overlap) 
 {
-	ASSERT(self->self);
+    Jello *jello = (Jello*) self->self;
+	ASSERT(jello); // Assert that the jello IS, in fact, jello
 
 	if (other->type == PICKUP_TYPE)
 		return false;
@@ -13,9 +14,12 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 	if (other->type == PLAYER_TYPE || other->type == SHOT_TYPE) 
 	{
 		Vec2 pos;
-		if (other->type == PLAYER_TYPE)
+		if (other->type == PLAYER_TYPE){
 			pos = ((Player*)other)->body_id->position;
-		else
+            jello->jumped += 1;
+            play_sound_perturbed(audio_splat, 1, 1, 0.05, 0.075);
+        }
+        else
 			pos = ((Shot*)other)->body_id->position;
 
 		for (int i = 0; i < 20; i++)
@@ -32,12 +36,8 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 		}
 	}
 
-	Jello *jello = (Jello*) self->self;
-
 	other->velocity.y = BOUNCE_SPEED;
 	
-    play_sound_perturbed(audio_splat, 1, 1, 0.25, 0.1);
-
 	return false;
 }
 Jello *create_jello(Shot *shot)
@@ -49,7 +49,8 @@ Jello *create_jello(Shot *shot)
 	body_id->type = JELLO_TYPE;
 	Jello *jello = push_struct(Jello);
 	jello->body_id = body_id;
-	body_id->self = jello;
+	jello->jumped = 0;
+    body_id->self = jello;
 	return jello;
 }
 
@@ -62,13 +63,13 @@ void destroy_jello(Jello *jello)
 void update_jellos(List<Jello*> *jellos, f32 delta)
 {
 
-	for (s32 i = jellos->length-1; i >= 0; i--) 
+	for (s32 i = jellos->length-1; i >= 0; --i) 
 	{
 		Jello *jello = (*jellos)[i]; 
 		jello->alive_time += delta;
 		jello->body_id->velocity = V2(0, 0);
 
-		if (jello->alive_time > JELLO_ALIVE_TIME) 
+		if (jello->alive_time > JELLO_ALIVE_TIME || jello->jumped >= 2) 
 		{
 			destroy_jello(jello);
 			jellos->remove(i);

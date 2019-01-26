@@ -3,6 +3,7 @@
 struct Jello {
 	BodyID body_id;
 	f32 alive_time;
+    u8 jumped;
 };
 
 Jello *create_jello(Shot *shot);

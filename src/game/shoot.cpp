@@ -40,6 +40,7 @@ Shot *create_shot(Player *player, ShotKind shot_kind, s32 direction, List<Jello*
 	shot->is_destroyed = false;
 	shot->jello_list = jellos;
 	body_id->self = shot;
+    play_sound_perturbed(audio_pew, 1, 1, 0.01, 0.075);
     return shot;
 }
 
