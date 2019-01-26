@@ -2,12 +2,17 @@
 #define PLAYER_DEACCELERATION 40.0f
 #define PLAYER_MAX_SPEED 5
 #define PLAYER_JUMP_SPEED 7
+#define MAX_KAYOTEE_TIME 1.0f
 #define GRAVITY 20
 
 struct Player {
 	BodyID body_id;
-	bool in_air;
 	f32 shot_delay;
+
+	// Jumping
+	bool jumped;
+	bool grounded;
+	f32 kayotee_time;
 };
 
 bool player_callback(Body *self, Body *other, Overlap overlap)
@@ -15,7 +20,8 @@ bool player_callback(Body *self, Body *other, Overlap overlap)
 	Player *player = (Player *) self->self;
 	if (dot((self->position - other->position), V2(0, 1)) > 0.8)
 	{
-		player->in_air = false;
+		player->jumped = false;
+		player->grounded = true;
 	}
 	return false;
 }
@@ -64,11 +70,20 @@ void player_update(Player *player, f32 delta)
 	//
 	// Jumping 
 	//
-	if (!(player->in_air) && pressed("jump")) 
+	if (player->grounded)
+	{
+		player->kayotee_time = 0;
+	}
+
+	if (player->kayotee_time < MAX_KAYOTEE_TIME && pressed("jump")) 
 	{
 		vel.y = PLAYER_JUMP_SPEED;
+		player->jumped = true;
+		player->kayotee_time = MAX_KAYOTEE_TIME;
 	}
-	player->in_air = true;
+
+	player->kayotee_time += delta;
+	player->grounded = false;
 
 	body->velocity = vel;
 
