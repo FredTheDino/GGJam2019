@@ -1,8 +1,8 @@
-
-#define PLAYER_ACCELERATION 300
+#define PLAYER_ACCELERATION 10.0f
+#define PLAYER_DEACCELERATION 40.0f
 #define PLAYER_MAX_SPEED 5
-#define PLAYER_JUMP_SPEED 3
-#define GRAVITY 2
+#define PLAYER_JUMP_SPEED 7
+#define GRAVITY 20
 
 struct Player {
 	BodyID body_id;
@@ -10,47 +10,79 @@ struct Player {
 	f32 shot_delay;
 };
 
-Player create_player()
+bool player_callback(Body *self, Body *other, Overlap overlap)
 {
-	Player player = {};
-	player.body_id = create_body(0xff, 1, 0);
-	player.in_air = false;
-	player.shot_delay = 0.5f;
+	Player *player = (Player *) self->self;
+	if (dot((self->position - other->position), V2(0, 1)) > 0.8)
+	{
+		player->in_air = false;
+	}
+	return false;
 }
 
-
-void player_update(Player *p, f32 delta) 
+Player *create_player()
 {
-	Vec2 vel = p->body_id->velocity;
-	int input_value = value("right") + value("left");
-	if (input_value) {
-		vel.x = PLAYER_MAX_SPEED * sign(input_value);
-	}
-	else {
-		vel.x = 0;
-	}
+	Player *player = push_struct(Player);
+	player->body_id = create_body(0xff, 1, 0);
+	player->body_id->self = player;
+	player->body_id->overlap = player_callback;
+	player->shot_delay = 0.5f;
+	return player;
+}
 
+void player_update(Player *player, f32 delta) 
+{
+	Body *body = find_body_ptr(player->body_id);
+	//
+	// Movement
+	//
+
+	Vec2 vel = body->velocity;
+
+	//
 	// Update gravity
+	//
 	vel.y -= GRAVITY * delta;
 
-	p->body_id->velocity = vel;
-}
-
-void player_shoot(Player *p, s32 direction) 
-{
-
-}
-
-void player_draw() 
-{
-
-}
-
-void player_jump(Player *p) 
-{
-	if (!(p->in_air) && pressed("jump")) 
-	{
-		p->body_id->velocity.y = PLAYER_JUMP_SPEED;
+	f32 acc_direction = value("right") + value("left");
+	if (acc_direction) {
+		vel.x += PLAYER_ACCELERATION * acc_direction;
 	}
+	else 
+	{
+		if (vel.x < 0)
+		{
+			vel.x = minimum(0.0f, vel.x + PLAYER_DEACCELERATION * delta);
+		}
+		else if (vel.x > 0)
+		{
+			vel.x = maximum(0.0f, vel.x - PLAYER_DEACCELERATION * delta);
+		}
+	}
+	vel.x = clamp((f32) -PLAYER_MAX_SPEED, (f32) PLAYER_MAX_SPEED, vel.x);
+
+	//
+	// Jumping 
+	//
+	if (!(player->in_air) && pressed("jump")) 
+	{
+		vel.y = PLAYER_JUMP_SPEED;
+	}
+	player->in_air = true;
+
+	body->velocity = vel;
+
+	game.camera->position = body->position;
+}
+
+void player_shoot(Player *player, s32 direction) 
+{
+
+}
+
+void player_draw(Player *player) 
+{
+	Texture texture = find_asset(pixel).texture;
+	draw_sprite(texture, player->body_id->position, V2(1, 1), 0);
 }
 

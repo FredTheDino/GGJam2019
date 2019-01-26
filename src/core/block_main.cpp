@@ -52,9 +52,10 @@
 
 #include "block_physics.cpp"
 
-#include "../game/player.cpp"
 #include "../game/assets.cpp"
+#include "../game/player.cpp"
 #include "../game/shoot.cpp"
+#include "../game/level_loader.cpp"
 
 void initalize_libraries()
 {
@@ -122,7 +123,7 @@ void destroy_libraries()
 void update_game_clock(Clock *clock)
 {
 	f64 current_time = MS_TO_SEC(SDL_GetTicks());
-	clock->delta = current_time - clock->time;
+	clock->delta = maximum((f32) (current_time - clock->time), 1.0f / 30.0f);
 	clock->time = current_time;
 }
 
@@ -137,7 +138,8 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
-	{ List<Vec2> points = create_list<Vec2>(4);
+	{ 
+		List<Vec2> points = create_list<Vec2>(4);
 
 		points.append(V2(-0.5f,  0.5f));
 		points.append(V2( 0.5f,  0.5f));
@@ -150,7 +152,7 @@ void run()
 	}
 
 	load_assets();
-	Player player = create_player();
+	Player *player = level_load("res/simple.json");
 
 	// 
 	// Graphcis
@@ -161,10 +163,11 @@ void run()
 	Context text_context = initalize_graphics(load_asset(AFT_SHADER, "res/text.glsl"));
 	game.text_context = &text_context;
 
+
 	Camera main_camera = {};
 	game.camera = &main_camera;
 	game.camera->shake_stress = 0.05f;
-	game.camera->zoom = 1;
+	game.camera->zoom = 0.1;
 	game.camera->rotation = 0.0f;
 
 	// 
@@ -205,6 +208,7 @@ void run()
 	add_input(input, "show");
 	add_binding(input, KEY(q), "show");
 
+	update_game_clock(&game.clock);
 	game.running = 1;
 	while (game.running)
 	{
@@ -223,8 +227,7 @@ void run()
 				game.running = 0;
 			}
 
-			player_update(&player, game.clock.delta);
-			player_jump(&player);
+			player_update(player, game.clock.delta);
 			
 			// Physics update.
 			update_world(game.clock.delta);
@@ -236,8 +239,10 @@ void run()
 			frame(game.clock);
 
 
-			draw_sprite(find_asset(pixel).texture, player.body_id->position, V2(1, 1), 0);
-
+			player_draw(player);
+			
+			debug_line(V2(1, 1), V2(-1, -1));
+			debug_line(V2(-1, 1), V2(1, -1));
 
 			// Debug draw the physics
 			debug_draw_world();
@@ -259,6 +264,6 @@ void run()
 	destroy_temp_memory();
 #endif
 
-	debug_check_memory();
+	// debug_check_memory();
 }
 
