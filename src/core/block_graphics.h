@@ -50,9 +50,13 @@ Context initalize_graphics(AssetID id);
 // Free the graphics API
 void destroy_graphics(Context *gfx);
 
+
 //
 // Drawing 
 //
+
+// Shake the camera by some ammount.
+void shake_camera(f32 shake);
 
 // Start a new frame
 void frame(Context *gfx, Clock clock, Camera *camera);

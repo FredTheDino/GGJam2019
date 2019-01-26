@@ -33,6 +33,11 @@ void destroy_graphics(Context *gfx)
 	glDeleteProgram(gfx->vertex_buffer);
 }
 
+void shake_camera(f32 shake)
+{
+	game.camera->shake_timer += shake;
+}
+
 void frame(Context *gfx, Camera *camera, Clock clock)
 {
 	// Disabled the debug draw.
