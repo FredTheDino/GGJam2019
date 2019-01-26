@@ -11,10 +11,11 @@ struct Level
 	TileMap map;
 };
 
-void level_load(const char *path, Player *player, Level *level)
+Player *level_load(const char *path, Level *level)
 {
 	using namespace JSON;
-	*player = *create_player();
+	// Player p = create_player();
+	Player *player = create_player();
 	level->map = create_tilemap(spritesheet);
 	level->bodies = create_list<BodyID>(10);
 	const char *file = read_entire_file(path);
@@ -70,5 +71,6 @@ void level_load(const char *path, Player *player, Level *level)
 		print("%f, %f\n", p.x, p.y);
 		add_chunk(&level->map, p, verts);
 	}
+	return player;
 }
 

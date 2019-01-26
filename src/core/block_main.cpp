@@ -169,15 +169,14 @@ void run()
 	List<Jello*> jellos = create_list<Jello*>(20); 
 	List<Pickup*> pickups = create_list<Pickup*>(10); 
 
-	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
-	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
-
 	RandomState rng = seed(4);
 
 	Level level;
-	Player player;
-	level_load("res/simple.json", &player, &level);
-	
+	Player *player = level_load("res/simple.json", &level);
+
+	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
+	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
+
 	// 
 	// Graphcis
 	//
@@ -251,7 +250,7 @@ void run()
 			if (snow_time > 0.20) {
 				snow_time = 0;
 				Particle p = {};
-				p.position = player.body_id->position + V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 30.0f));
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 30.0f));
 				p.lifetime = 60;
 				p.from_color = V4(1, 1, 1, 0.8f);
 				p.to_color = V4(1, 1, 1, 0.8f);
@@ -271,16 +270,16 @@ void run()
 				for (int i = 0; i < 20; i++)
 				{
 					Particle p = {};
-					if (player.face_direction > 0)
+					if (player->face_direction > 0)
 					{
-						p.position = player.body_id->position + V2(0.5f, 0);
+						p.position = player->body_id->position + V2(0.5f, 0);
 					}
 					else
 					{
-						p.position = player.body_id->position + V2(-0.5f, 0);
+						p.position = player->body_id->position + V2(-0.5f, 0);
 					}
 					p.lifetime = 1;
-					switch(player.weapon)
+					switch(player->weapon)
 					{
 						case JELLO: p.from_color = V4(0, 1, 0, 0.5f);
 									break;
@@ -297,10 +296,10 @@ void run()
 				}
 			}
 
-			if (player.bounced)
+			if (player->bounced)
 			{
 				Particle p = {};
-				p.position = player.body_id->position + V2(random_real_in_range(&rng, -0.5f, 0.5f), 0);
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -0.5f, 0.5f), 0);
 				p.lifetime = 10;
 				p.from_color = V4(0, 1, 0, 1);
 				p.to_color = V4(0, 1, 0, 1);
@@ -315,7 +314,7 @@ void run()
 				for (int i = 0; i < 20; i++)
 				{
 					Particle p = {};
-					p.position = player.body_id->position;
+					p.position = player->body_id->position;
 					p.lifetime = 10;
 					p.from_color = V4(0, 1, 0, 1);
 					p.to_color = V4(0, 1, 0, 1);
@@ -331,7 +330,7 @@ void run()
 				for (int i = 0; i < 15; i++)
 				{
 					Particle p = {};
-					p.position = player.body_id->position;
+					p.position = player->body_id->position;
 					p.lifetime = 1.5f;
 					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 					p.to_color = V4(1, 1, 1, 0);
@@ -342,10 +341,10 @@ void run()
 				}
 			}
 
-			if (player.grounded && (value("left") || value("right")))
+			if (player->grounded && (value("left") || value("right")))
 			{
 				Particle p = {};
-				p.position = player.body_id->position;
+				p.position = player->body_id->position;
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
@@ -358,7 +357,7 @@ void run()
 			if (value("right"))
 			{
 				Particle p = {};
-				p.position = player.body_id->position;
+				p.position = player->body_id->position;
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
@@ -377,13 +376,13 @@ void run()
 			}
 
 			update_particles(&system, game.clock.delta);
-			player_update(&player, game.clock.delta);
+			player_update(player, game.clock.delta);
 			update_shots(&shots, game.clock.delta);
 			update_jellos(&jellos, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
-				player_shoot(&player, &shots, &jellos);
+				player_shoot(player, &shots, &jellos);
 			}
 			
 			// Physics update.
@@ -396,7 +395,7 @@ void run()
 			frame(game.clock);
 
 			draw_particles(&system);
-			player_draw(&player);
+			player_draw(player);
 			shots_draw(&shots);
 			pickups_draw(&pickups);
 			
