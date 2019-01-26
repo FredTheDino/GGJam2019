@@ -21,6 +21,7 @@ Player *level_load(const char *path, Level *level)
 	const char *file = read_entire_file(path);
 	Value value = parse_object(file);
 	Value tileset = value["tilesets"][(u32)0];
+
 	// Just assume the first layer is objects. (Smart.)
 	Value objects = value["layers"][(u32) 0]["objects"];
 	for (u32 i = 0; i < objects.length(); i++) 
@@ -68,9 +69,11 @@ Player *level_load(const char *path, Level *level)
 			verts.append(V4(x + 1, y + 1, u + w, v + h));
 			verts.append(V4(x + 1, y    , u + w, v));
 		}
-		print("%f, %f\n", p.x, p.y);
 		add_chunk(&level->map, p, verts);
 	}
+
+	// Done with it.
+	destroy_object(value);
 	return player;
 }
 

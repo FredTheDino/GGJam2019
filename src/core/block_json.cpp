@@ -296,6 +296,36 @@ namespace JSON
 		return result;
 	}
 
+	void destroy_object(Value value)
+	{
+		switch (value.type)
+		{
+			default:
+			case(ValueType::J_UNDEFINED):
+			case(ValueType::J_NULL):
+			case(ValueType::J_BOOL):
+			case(ValueType::J_NUMBER):
+				break;
+			case(ValueType::J_STRING):
+				pop_memory((void *) value.string.data);
+				break;
+			case(ValueType::J_ARRAY):
+				for (u32 i = 0; i < value.length(); i++)
+					destroy_object(value[i]);
+				pop_memory(value.array.values);
+				break;
+			case(ValueType::J_OBJECT):
+				for (u32 i = 0; i < value.length(); i++)
+				{
+					destroy_object(value.object.hashes[i]);
+					destroy_object(value.object.values[i]);
+				}
+				pop_memory(value.object.hashes);
+				pop_memory(value.object.values);
+				break;
+		}
+	}
+
 	Value parse_value(Stream *stream)
 	{
 		if (stream->next())
@@ -463,4 +493,5 @@ JSON_STRING_LEAVE:
 		value.string.hash = string_hash(string.data);
 		return value;
 	}
+
 };

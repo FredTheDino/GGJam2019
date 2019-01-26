@@ -21,16 +21,42 @@ namespace JSON
 	{
 		J_UNDEFINED,
 		J_NULL,
-		J_STRING,
-		J_NUMBER,
-		J_OBJECT,
-		J_ARRAY,
 		J_BOOL,
+		J_NUMBER,
+		J_STRING,
+		J_ARRAY,
+		J_OBJECT,
 	};
 
 	struct Value
 	{
 		ValueType type;
+
+		union
+		{
+			// Objects
+			struct {
+				u32 num_values;
+				Value *hashes;
+				Value *values;
+
+			} object;
+			// Arrays
+			struct {
+				u32 num_values;
+				Value *values;
+			} array;
+			// Strings
+			struct {
+				u32 hash;
+				u32 length;
+				const char *data;
+			} string;
+			// Numbers
+			f64 number;
+			// Bools
+			bool boolean;
+		};
 
 		u32 length() const;
 		Value operator[] (u32 i) const;
@@ -69,31 +95,6 @@ namespace JSON
 			return string.data;
 		}
 
-		union
-		{
-			// Objects
-			struct {
-				u32 num_values;
-				Value *hashes;
-				Value *values;
-
-			} object;
-			// Arrays
-			struct {
-				u32 num_values;
-				Value *values;
-			} array;
-			// Strings
-			struct {
-				u32 hash;
-				u32 length;
-				const char *data;
-			} string;
-			// Numbers
-			f64 number;
-			// Bools
-			bool boolean;
-		};
 	};
 
 	// A crude debug log for writing out parsed Values.
@@ -115,6 +116,9 @@ namespace JSON
 	Value parse_number(Stream *stream);
 	Value parse_array(Stream *stream);
 	Value parse_boolean(Stream *stream);
+
+	// Destroy an object, and all the memory linked to it.
+	void destroy_object(Value value);
 }
 
 #endif
