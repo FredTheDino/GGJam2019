@@ -2,17 +2,21 @@
 #define PLAYER_DEACCELERATION 40.0f
 #define PLAYER_MAX_SPEED 5
 #define PLAYER_JUMP_SPEED 7
+#define PLAYER_SHOT_DELAY 0.3f
 #define MAX_KAYOTEE_TIME 1.0f
 #define GRAVITY 20
 
 struct Player {
+	// Body
 	BodyID body_id;
-	f32 shot_delay;
-
+	// Shooting
+	f32 shot_time;
 	// Jumping
 	bool jumped;
 	bool grounded;
 	f32 kayotee_time;
+	// Direction
+	s32 face_direction;
 };
 
 bool player_callback(Body *self, Body *other, Overlap overlap)
@@ -32,7 +36,8 @@ Player *create_player()
 	player->body_id = create_body(0xff, 1, 0);
 	player->body_id->self = player;
 	player->body_id->overlap = player_callback;
-	player->shot_delay = 0.5f;
+	player->shot_time = 0;
+	player->face_direction = 1;
 	return player;
 }
 
@@ -53,16 +58,19 @@ void player_update(Player *player, f32 delta)
 	f32 acc_direction = value("right") + value("left");
 	if (acc_direction) {
 		vel.x += PLAYER_ACCELERATION * acc_direction;
+		player->face_direction = sign_no_zero(vel.x);
 	}
 	else 
 	{
 		if (vel.x < 0)
 		{
 			vel.x = minimum(0.0f, vel.x + PLAYER_DEACCELERATION * delta);
+			player->face_direction = -1;
 		}
 		else if (vel.x > 0)
 		{
 			vel.x = maximum(0.0f, vel.x - PLAYER_DEACCELERATION * delta);
+			player->face_direction = 1;
 		}
 	}
 	vel.x = clamp((f32) -PLAYER_MAX_SPEED, (f32) PLAYER_MAX_SPEED, vel.x);
@@ -87,12 +95,21 @@ void player_update(Player *player, f32 delta)
 
 	body->velocity = vel;
 
+	//
+	// Shooting
+	//
+	player->shot_time += delta;
+
 	game.camera->position = body->position;
 }
 
-void player_shoot(Player *player, s32 direction) 
+void player_shoot(Player *player, List<Shot*> *shots, s32 direction) 
 {
-
+	if (player->shot_time > PLAYER_SHOT_DELAY)
+	{
+		shots->append(create_shot(player, CARROT, player->face_direction));
+		player->shot_time = 0;
+	}
 }
 
 void player_draw(Player *player) 
