@@ -1,13 +1,40 @@
-Shot *create_shot(Player *player, ShotKind shot_kind, s32 direction)
+bool shot_on_collision(Body *self, Body *other, Overlap overlap)
+{
+	ASSERT(self->self);
+    Shot *shot = (Shot *) self->self;
+	if (shot->is_destroyed || other->inverse_mass == JELLO_INV_MASS)
+		return true;
+
+    switch (shot->shot_kind)
+	{
+		case JELLO:
+			shot->jello_list->append(create_jello(shot));
+			break;
+
+		case CARROT:
+			break;
+
+		case ONION:
+			break;
+    }
+	shot->is_destroyed = true;
+    return true;
+}
+
+Shot *create_shot(Player *player, ShotKind shot_kind, s32 direction, List<Jello*> *jellos)
 {
     BodyID body_id = create_body(0xFF, 1);
     body_id->velocity.x = direction * SHOT_SPEED;
 	body_id->position = player->body_id->position + V2(direction, 0);
 	body_id->scale = V2(0.5f, 0.5f);
+	body_id->overlap = shot_on_collision;
     Shot *shot = push_struct(Shot);
     shot->body_id = body_id;
     shot->shot_kind = shot_kind;
 	shot->alive_time = 0;
+	shot->is_destroyed = false;
+	shot->jello_list = jellos;
+	body_id->self = shot;
     return shot;
 }
 
@@ -34,27 +61,16 @@ void update_shots (List<Shot*> *shots, f32 delta)
 		Shot *shot = (*shots)[i]; 
 		shot->alive_time += delta;
 
-		if (shot->alive_time > SHOT_ALIVE_TIME) 
+		if (shot->shot_kind == JELLO) 
+		{
+			shot->body_id->velocity.y -= GRAVITY * delta;
+		}
+
+		if (shot->alive_time > SHOT_ALIVE_TIME || shot->is_destroyed) 
 		{
 			destroy_shot(shot);
 			shots->remove(i);
 		}
 	}
-}
-
-bool shot_on_collision(Body *self, Body *other, Overlap overlap)
-{
-    Shot *shot = (Shot *) self->self;
-    switch (shot->shot_kind) {
-    case JELLO:
-        break;
-
-    case CARROT:
-        break;
-
-    case ONION:
-        break;
-    }
-    return true;
 }
 

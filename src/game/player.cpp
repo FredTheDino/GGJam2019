@@ -11,6 +11,7 @@ struct Player {
 	BodyID body_id;
 	// Shooting
 	f32 shot_time;
+	ShotKind weapon;
 	// Jumping
 	bool jumped;
 	bool grounded;
@@ -38,6 +39,7 @@ Player *create_player()
 	player->body_id->overlap = player_callback;
 	player->body_id->scale = V2(1,1);
 	player->shot_time = 0;
+	player->weapon = JELLO;
 	player->face_direction = 1;
 	return player;
 }
@@ -104,11 +106,11 @@ void player_update(Player *player, f32 delta)
 	game.camera->position = body->position;
 }
 
-void player_shoot(Player *player, List<Shot*> *shots) 
+void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos) 
 {
 	if (player->shot_time > PLAYER_SHOT_DELAY)
 	{
-		shots->append(create_shot(player, CARROT, player->face_direction));
+		shots->append(create_shot(player, player->weapon, player->face_direction, jellos));
 		player->shot_time = 0;
 	}
 }

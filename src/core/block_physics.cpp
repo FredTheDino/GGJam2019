@@ -245,6 +245,7 @@ BodyID create_body(PhysicsWorld *world, u32 layer,
 
 	// TODO: Insert it into at a good place. This is kinda dumb.
 	Limit limit = project_body(world, body, world->sorting_axis);
+	limit.is_new = true;
 	world->limits.append(limit);
 
 	world->bodies[body.id.pos] = body;
@@ -608,6 +609,8 @@ void update_world(PhysicsWorld *world, f32 delta)
 				if ((outer.layer & inner.layer) == 0)
 					break;
 				if (outer.upper < inner.lower)
+					break;
+				if (outer.is_new || inner.is_new)
 					break;
 				Body *a = find_body_ptr(world, outer.owner);
 				Body *b = find_body_ptr(world, inner.owner);

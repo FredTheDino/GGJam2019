@@ -59,6 +59,7 @@ struct Limit
 	BodyID owner;
 	Layer layer;
 	f32 lower, upper;
+	bool is_new;
 };
 
 struct PhysicsWorld

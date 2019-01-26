@@ -54,8 +54,10 @@
 
 #include "../game/assets.cpp"
 #include "../game/shoot.h"
+#include "../game/jello.h"
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
+#include "../game/jello.cpp"
 #include "../game/level_loader.cpp"
 
 void initalize_libraries()
@@ -156,6 +158,7 @@ void run()
 	Player *player = level_load("res/simple.json");
 
 	List<Shot*> shots = create_list<Shot*>(5); 
+	List<Jello*> jellos = create_list<Jello*>(20); 
 
 	RandomState rng = seed(4);
 
@@ -309,10 +312,11 @@ void run()
 			update_particles(&system, game.clock.delta);
 			player_update(player, game.clock.delta);
 			update_shots(&shots, game.clock.delta);
+			update_jellos(&jellos, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
-				player_shoot(player, &shots);
+				player_shoot(player, &shots, &jellos);
 			}
 			
 			// Physics update.
