@@ -154,6 +154,8 @@ void run()
 	load_assets();
 	Player player = level_load("res/simple.json");
 
+	RandomState rng = seed(4);
+
 	// 
 	// Graphcis
 	//
@@ -163,13 +165,13 @@ void run()
 	Context text_context = initalize_graphics(load_asset(AFT_SHADER, "res/text.glsl"));
 	game.text_context = &text_context;
 
-
 	Camera main_camera = {};
 	game.camera = &main_camera;
 	game.camera->shake_stress = 0.05f;
 	game.camera->zoom = 0.1;
 	game.camera->rotation = 0.0f;
 
+	ParticleSystem system = create_particle_system(pixel);
 	// 
 	// Input
 	//
@@ -223,10 +225,70 @@ void run()
 		// Update
 		{
 
-			if (pressed("quit")) {
+			if (pressed("quit")) 
+			{
 				game.running = 0;
 			}
 
+			if (pressed("shoot"))
+			{
+				for (int i=0; i<20; i++)
+				{
+					Particle p = {};
+					p.position = player.body_id->position + V2(0.5f, 0);
+					p.lifetime = 1;
+					p.from_color = V4(0, 0, 0, 0.5f);
+					p.to_color = V4(0, 0, 0, 0);
+					p.angular_velocity = random_real_in_range(&rng, -1.0f, 1.0f);
+					p.linear_velocity = random_vec2(&rng, V2(-0.5f, -0.5f), V2(0.5f, 0.5f));
+					p.scale = V2(0.2f, 0.2f);
+					add_particle(&system, p);
+				}
+			}
+
+			if (pressed("jump")) 
+			{
+				for (int i=0; i<15; i++)
+				{
+					Particle p = {};
+					p.position = player.body_id->position;
+					p.lifetime = 1.5f;
+					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
+					p.to_color = V4(1, 1, 1, 0);
+					p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
+					p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.8f, 0.6f));
+					p.scale = V2(0.7f, 0.7f);
+					add_particle(&system, p);
+				}
+			}
+
+			if (value("left"))
+			{
+				Particle p = {};
+				p.position = player.body_id->position;
+				p.lifetime = 2;
+				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
+				p.to_color = V4(1, 1, 1, 0);
+				p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
+				p.linear_velocity = random_vec2(&rng, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
+				p.scale = V2(0.7f, 0.7f);
+				add_particle(&system, p);
+			}
+
+			if (value("right"))
+			{
+				Particle p = {};
+				p.position = player.body_id->position;
+				p.lifetime = 2;
+				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
+				p.to_color = V4(1, 1, 1, 0);
+				p.angular_velocity = random_real_in_range(&rng, 0.0f, 1.0f);
+				p.linear_velocity = random_vec2(&rng, V2(-0.8f, 0.0f), V2(0.0f, 0.6f));
+				p.scale = V2(0.7f, 0.7f);
+				add_particle(&system, p);
+			}
+
+			update_particles(&system, game.clock.delta);
 			player_update(&player, game.clock.delta);
 			
 			// Physics update.
@@ -238,7 +300,7 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
-
+			draw_particles(&system);
 			player_draw(player);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
