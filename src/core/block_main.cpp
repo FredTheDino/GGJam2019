@@ -371,9 +371,12 @@ void run()
 			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
-			debug_draw_world();
-			// Draw debug primitives.
-			debug_draw();
+			if (value("show"))
+			{
+				debug_draw_world();
+				// Draw debug primitives.
+				debug_draw();
+			}
 
 			// Tell SDL to update the graphics.
 			SDL_GL_SwapWindow(game.window);

@@ -78,7 +78,7 @@ void main()
 	}
 	else
 	{
-		out_color = vec4(texture(sprite_texture, uv).xyz, 1.0) * tint;
+		out_color = texture(sprite_texture, uv).xyzw * tint;
 	}
 }
 
