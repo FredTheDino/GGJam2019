@@ -53,6 +53,7 @@
 #include "block_physics.cpp"
 
 #include "../game/assets.cpp"
+#include "../game/shoot.h"
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
 #include "../game/level_loader.cpp"
@@ -152,7 +153,9 @@ void run()
 	}
 
 	load_assets();
-	Player player = level_load("res/simple.json");
+	Player *player = level_load("res/simple.json");
+
+	List<Shot*> shots = create_list<Shot*>(5); 
 
 	RandomState rng = seed(4);
 
@@ -235,9 +238,21 @@ void run()
 				for (int i=0; i<20; i++)
 				{
 					Particle p = {};
-					p.position = player.body_id->position + V2(0.5f, 0);
+					if (player->face_direction > 0)
+					{
+						p.position = player->body_id->position + V2(0.5f, 0);
+					}
+					else
+					{
+						p.position = player->body_id->position + V2(-0.5f, 0);
+					}
 					p.lifetime = 1;
-					p.from_color = V4(0, 0, 0, 0.5f);
+					switch(player->weapon)
+					{
+						case JELLO: p.from_color = V4(0, 1, 0, 0.5f);
+						case CARROT: p.from_color = V4(0.98f, 0.61f, 0.12f, 0.5f);
+						case ONION: p.from_color = V4(0.8f, 0.6f, 0, 0.5f);
+					}
 					p.to_color = V4(0, 0, 0, 0);
 					p.angular_velocity = random_real_in_range(&rng, -1.0f, 1.0f);
 					p.linear_velocity = random_vec2(&rng, V2(-0.5f, -0.5f), V2(0.5f, 0.5f));
@@ -251,7 +266,7 @@ void run()
 				for (int i=0; i<15; i++)
 				{
 					Particle p = {};
-					p.position = player.body_id->position;
+					p.position = player->body_id->position;
 					p.lifetime = 1.5f;
 					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 					p.to_color = V4(1, 1, 1, 0);
@@ -265,7 +280,7 @@ void run()
 			if (value("left"))
 			{
 				Particle p = {};
-				p.position = player.body_id->position;
+				p.position = player->body_id->position;
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
@@ -278,7 +293,7 @@ void run()
 			if (value("right"))
 			{
 				Particle p = {};
-				p.position = player.body_id->position;
+				p.position = player->body_id->position;
 				p.lifetime = 2;
 				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
 				p.to_color = V4(1, 1, 1, 0);
@@ -289,7 +304,13 @@ void run()
 			}
 
 			update_particles(&system, game.clock.delta);
-			player_update(&player, game.clock.delta);
+			player_update(player, game.clock.delta);
+			update_shots(&shots, game.clock.delta);
+
+			// Handle input
+			if (pressed("shoot")) {
+				player_shoot(player, &shots);
+			}
 			
 			// Physics update.
 			update_world(game.clock.delta);
@@ -302,6 +323,7 @@ void run()
 
 			draw_particles(&system);
 			player_draw(player);
+			shots_draw(&shots);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
