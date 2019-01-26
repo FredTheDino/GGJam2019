@@ -4,23 +4,11 @@
 #define ENEMY_START_HP 3
 
 struct Enemy {
-    BodyId body_id;
+    BodyID body_id;
     u32 hp;
+    s32 facing;
 };
 
-bool enemy_callback(Body *self, Body *other, Overlap overlap)
-{
-    Enemy *enemy = (Enemy *) self->self;
-    if (other->type == SHOT_TYPE) {
-	Shot *shot = (Shot *) other->self;
-	destroy_shot(shot);
-	enemy->hp--;
-	if (enemy->hp <= 0) {
-            destroy_enemy(enemy);
-	}
-    }
-    return 0;
-}
 
 Enemy *create_enemy()
 {
@@ -37,4 +25,25 @@ void destroy_enemy(Enemy *enemy)
 {
     destroy_body(enemy->body_id);
     pop_memory(enemy);
+}
+
+void enemy_draw(Enemy *enemy)
+{
+    Texture texture = find_asset(pixel).texture;
+    BodyID body_id = enemy->body_id;
+    draw_sprite(texture, body_id->position, body_id->scale, 0);
+}
+
+bool enemy_callback(Body *self, Body *other, Overlap overlap)
+{
+    Enemy *enemy = (Enemy *) self->self;
+    if (other->type == SHOT_TYPE) {
+	Shot *shot = (Shot *) other->self;
+	destroy_shot(shot);
+	enemy->hp--;
+	if (enemy->hp <= 0) {
+            destroy_enemy(enemy);
+	}
+    }
+    return 0;
 }

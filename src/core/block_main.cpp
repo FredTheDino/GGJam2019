@@ -70,6 +70,7 @@ RandomState rnd = seed(4);
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
 #include "../game/level_loader.cpp"
+#include "../game/enemy.cpp"
 
 void initalize_libraries()
 {
