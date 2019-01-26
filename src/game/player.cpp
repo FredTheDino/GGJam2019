@@ -96,7 +96,6 @@ void player_update(Player *player, f32 delta)
 		player->kayotee_time = 0;
 	}
 
-	print("%d, %f\n", pressed("jump"), player->kayotee_time);
 	if (player->kayotee_time < MAX_KAYOTEE_TIME && pressed("jump")) 
 	{
 		vel.y = PLAYER_JUMP_SPEED;

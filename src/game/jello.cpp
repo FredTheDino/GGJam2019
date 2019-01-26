@@ -10,6 +10,28 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 	if (other->inverse_mass == 0 || other->type == JELLO_TYPE)
 		return true;
 
+	if (other->type == PLAYER_TYPE || other->type == SHOT_TYPE) 
+	{
+		Vec2 pos;
+		if (other->type == PLAYER_TYPE)
+			pos = ((Player*)other)->body_id->position;
+		else
+			pos = ((Shot*)other)->body_id->position;
+
+		for (int i = 0; i < 20; i++)
+		{
+			Particle p = {};
+			p.position = pos;
+			p.lifetime = 10;
+			p.from_color = V4(0, 1, 0, 1);
+			p.to_color = V4(0, 1, 0, 1);
+			p.linear_velocity = random_vec2(&rnd, V2(-1, 0.5f), V2(1, 1));
+			p.scale = V2(0.1f, 0.1f);
+			p.gravity = GRAVITY/900.0f;
+			add_particle(&particle_system, p);
+		}
+	}
+
 	Jello *jello = (Jello*) self->self;
 
 	other->velocity.y = BOUNCE_SPEED;
