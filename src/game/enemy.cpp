@@ -11,6 +11,14 @@ struct Enemy {
 bool enemy_callback(Body *self, Body *other, Overlap overlap)
 {
     Enemy *enemy = (Enemy *) self->self;
+    if (other->type == SHOT_TYPE) {
+	Shot *shot = (Shot *) other->self;
+	destroy_shot(shot);
+	enemy->hp--;
+	if (enemy->hp <= 0) {
+            destroy_enemy(enemy);
+	}
+    }
     return 0;
 }
 
