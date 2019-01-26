@@ -236,6 +236,8 @@ BodyID create_body(PhysicsWorld *world, u32 layer,
 	body.trigger = trigger;
 	body.bounce = bounce;
 	body.layer = layer;
+    ASSERT(body.overlap == 0);
+    ASSERT(body.overlapnt == 0);
 	if (mass == 0.0)
 		body.inverse_mass = 0.0f;
 	else
@@ -514,7 +516,6 @@ void solve(PhysicsWorld *world, Overlap overlap, f32 delta)
 	f32 normal_velocity = dot(normal, relative_velocity);
 	if (normal_velocity < 0)
 	{
-		print("Nope!\n");
 		return;
 	}
 
@@ -569,6 +570,7 @@ void update_world(PhysicsWorld *world, f32 delta)
 				recalculate_highest(world);
 				continue;
 			}
+            ASSERT(body->overlapnt != (PhysicsCallback) 0x70);
 			//ASSERT(body);
 
 #if 0
@@ -637,16 +639,21 @@ void update_world(PhysicsWorld *world, f32 delta)
 				solve(world, overlap, delta);
 			}
 		}
+#if 1
         u32 prev_size = world->overlaps_prev.length;
         u32 cur_size = world->overlaps.length;
         bool found;
         for(u32 i = 0; i < prev_size; ++i){
             Overlap overlap = world->overlaps_prev[i];
-            if(overlap.a->overlapnt || overlap.b->overlapnt){
+            if (!find_body_ptr(overlap.a)) continue;
+            if (!find_body_ptr(overlap.b)) continue;
+            if (overlap.a->overlapnt || overlap.b->overlapnt){
                 Body *a = find_body_ptr(overlap.a);
                 Body *b = find_body_ptr(overlap.b);
                 found = false;
                 for(u32 j = 0; j < cur_size; ++j){
+                    if (!find_body_ptr(world->overlaps[j].a)) continue;
+                    if (!find_body_ptr(world->overlaps[j].b)) continue;
                     bool regular_exists = a->id == world->overlaps[j].a->id && b->id == world->overlaps[j].b->id;
                     bool reversed_exists = a->id == world->overlaps[j].b->id && b->id == world->overlaps[j].a->id;
                     if(regular_exists || reversed_exists){
@@ -668,6 +675,7 @@ void update_world(PhysicsWorld *world, f32 delta)
             world->overlaps_prev = otherlaps;
         }
 
+    #endif
 
 		for (u32 i = 0; i < world->bodies_highest; i++)
 		{

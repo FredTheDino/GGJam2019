@@ -51,8 +51,8 @@ struct Body
 	bool trigger;
 	PhysicsCallback overlap;
     PhysicsCallback overlapnt; // When it un-overlaps
-  void *self;
-  int type;
+    void *self;
+    int type;
 };
 
 
