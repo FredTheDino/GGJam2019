@@ -180,6 +180,7 @@ void run()
 	game.camera->rotation = 0.0f;
 
 	ParticleSystem system = create_particle_system(pixel);
+	float snow_time = 0;
 	// 
 	// Input
 	//
@@ -232,15 +233,19 @@ void run()
 
 		// Update
 		{
-			Particle p = {};
-			p.position = V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 50.0f));
-			p.lifetime = 60;
-			p.from_color = V4(1, 1, 1, 1);
-			p.to_color = V4(1, 1, 1, 1);
-			p.scale = V2(0.1f, 0.1f);
-			p.is_sine = true;
-			p.gravity = GRAVITY/5000.0f;
-			add_particle(&system, p);
+			snow_time += game.clock.delta;
+			if (snow_time > 0.20) {
+				snow_time = 0;
+				Particle p = {};
+				p.position = player->body_id->position + V2(random_real_in_range(&rng, -10.0f, 10.0f), random_real_in_range(&rng, 10.0f, 30.0f));
+				p.lifetime = 60;
+				p.from_color = V4(1, 1, 1, 0.8f);
+				p.to_color = V4(1, 1, 1, 0.8f);
+				p.scale = V2(0.1f, 0.1f);
+				p.is_sine = true;
+				p.gravity = GRAVITY/5000.0f;
+				add_particle(&system, p);
+			}
 
 			if (pressed("quit")) 
 			{
