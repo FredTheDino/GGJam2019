@@ -14,6 +14,7 @@ struct Player {
 	// Jumping
 	bool jumped;
 	bool grounded;
+	bool bounced;
 	f32 kayotee_time;
 	// Direction
 	s32 face_direction;
@@ -26,6 +27,11 @@ bool player_callback(Body *self, Body *other, Overlap overlap)
 	{
 		player->jumped = false;
 		player->grounded = true;
+		player->bounced = false;
+	}
+	if (other->inverse_mass == JELLO_INV_MASS) 
+	{
+		player->bounced = true;
 	}
 	return false;
 }
