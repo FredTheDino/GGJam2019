@@ -3,6 +3,8 @@
 #define ENEMY_MAX_SPEED 5
 #define ENEMY_START_HP 3
 
+#define ENEMY_SPRITE 0x80
+
 struct Enemy {
     BodyID body_id;
     u32 hp;
@@ -10,7 +12,7 @@ struct Enemy {
 };
 
 
-Enemy *create_enemy()
+Enemy *create_enemy(Vec2 position)
 {
     Enemy *enemy = push_struct(Enemy);
     enemy->body_id = create_body(0xff, 1, 0);
@@ -31,7 +33,7 @@ void enemy_draw(Enemy *enemy)
 {
     Texture texture = find_asset(pixel).texture;
     BodyID body_id = enemy->body_id;
-    draw_sprite(texture, body_id->position, body_id->scale, 0);
+    draw_sprite(ENEMY_SPRITE, body_id->position, V2(enemy->facing, 1));
 }
 
 bool enemy_callback(Body *self, Body *other, Overlap overlap)

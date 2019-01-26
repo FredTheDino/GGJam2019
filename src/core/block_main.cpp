@@ -175,6 +175,7 @@ void run()
 
 	Level level;
 	Player *player = level_load("res/map0.json", &level);
+	Enemy *enemy = create_enemy(player->body_id->position + V2(2, 0));
 
 	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
 	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
@@ -363,6 +364,7 @@ void run()
 
 			draw_particles(&particle_system);
 			player_draw(player);
+			enemy_draw(enemy);
 			shots_draw(&shots);
 			pickups_draw(&pickups);
 			
