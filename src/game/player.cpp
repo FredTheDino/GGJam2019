@@ -23,13 +23,17 @@ struct Player {
 bool player_callback(Body *self, Body *other, Overlap overlap)
 {
 	Player *player = (Player *) self->self;
+
+	if (other->type == PICKUP_TYPE)
+		return false;
+
 	if (dot(-overlap.normal, V2(0, 1)) > 0.8)
 	{
 		player->jumped = false;
 		player->grounded = true;
 		player->bounced = false;
 	}
-	if (other->inverse_mass == JELLO_INV_MASS) 
+	if (other->type == JELLO_TYPE) 
 	{
 		player->bounced = true;
 	}
@@ -43,6 +47,7 @@ Player *create_player()
 	player->body_id->self = player;
 	player->body_id->overlap = player_callback;
 	player->body_id->scale = V2(1,1);
+	player->body_id->type = PLAYER_TYPE;
 	player->shot_time = 0;
 	player->weapon = JELLO;
 	player->face_direction = 1;
