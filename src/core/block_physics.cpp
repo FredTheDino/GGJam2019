@@ -7,7 +7,8 @@ PhysicsWorld initalize_world()
 	world.bodies = create_list<Body>(32);
 	world.limits = create_list<Limit>(32);
 	world.overlaps = create_list<Overlap>(32);
-	world.timestep = 1.0f / 120.0f;
+	world.overlaps_prev = create_list<Overlap>(32);
+    world.timestep = 1.0f / 120.0f;
 
 	world.uid_counter = 32;
 	
@@ -631,11 +632,42 @@ void update_world(PhysicsWorld *world, f32 delta)
 					if (a->overlap(a, b, overlap))
 						continue;
 				if (b->overlap)
-					if (b->overlap(b, a, {b->id, a->id, overlap.depth, -overlap.normal, overlap.is_valid}))
+					if (b->overlap(b, a, {b->id, a->id, overlap.depth, -overlap.normal, true})) // No need to get a bool that we know the value of ;)
 						continue;
 				solve(world, overlap, delta);
 			}
 		}
+        u32 prev_size = world->overlaps_prev.length;
+        u32 cur_size = world->overlaps.length;
+        bool found;
+        for(u32 i = 0; i < prev_size; ++i){
+            Overlap overlap = world->overlaps_prev[i];
+            if(overlap.a->overlapnt || overlap.b->overlapnt){
+                Body *a = find_body_ptr(overlap.a);
+                Body *b = find_body_ptr(overlap.b);
+                found = false;
+                for(u32 j = 0; j < cur_size; ++j){
+                    bool regular_exists = a->id == world->overlaps[j].a->id && b->id == world->overlaps[j].b->id;
+                    bool reversed_exists = a->id == world->overlaps[j].b->id && b->id == world->overlaps[j].a->id;
+                    if(regular_exists || reversed_exists){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) continue; // No overlap change
+                if(a->overlapnt)
+                    a->overlapnt(a, b, overlap);
+                if(b->overlapnt)
+                    b->overlapnt(b, a, {b->id, a->id, overlap.depth, -overlap.normal, true});
+            }
+        }
+
+        {
+            List<Overlap> otherlaps = world->overlaps;
+            world->overlaps = world->overlaps_prev;
+            world->overlaps_prev = otherlaps;
+        }
+
 
 		for (u32 i = 0; i < world->bodies_highest; i++)
 		{

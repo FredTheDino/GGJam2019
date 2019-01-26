@@ -1,6 +1,7 @@
 struct Pickup {
 	BodyID body_id;
 	ShotKind weapon;
+    bool can_play_sound;
 };
 
 bool pickup_on_collision(Body *self, Body *other, Overlap overlap) {
@@ -9,9 +10,18 @@ bool pickup_on_collision(Body *self, Body *other, Overlap overlap) {
 	if (other->type == PLAYER_TYPE) {
 		Player *player = (Player*)other->self;
 		player->weapon = pickup->weapon;
-        play_sound_perturbed(audio_pickup, 1, 1, 0.25, 0.25);
+        if(pickup->can_play_sound){
+            pickup->can_play_sound = false;
+            play_sound_perturbed(audio_pickup, 1, 1, 0.25, 0.25);
+        }
 	}
 	return false;
+}
+
+bool pickup_on_uncollide(Body *self, Body *other, Overlap overlap){
+    Pickup *me = (Pickup *)self->self;
+    me->can_play_sound = true;
+    return false;
 }
 
 Pickup *create_pickup (List<Pickup*> *pickups, Vec2 position, ShotKind weapon)
@@ -20,10 +30,12 @@ Pickup *create_pickup (List<Pickup*> *pickups, Vec2 position, ShotKind weapon)
 	body_id->position = position;
 	body_id->scale = V2(0.8, 0.8);
 	body_id->overlap = pickup_on_collision;
-	body_id->type = PICKUP_TYPE;
+	body_id->overlapnt = pickup_on_uncollide;
+    body_id->type = PICKUP_TYPE;
 	Pickup *pickup = push_struct(Pickup);
 	pickup->body_id = body_id;
 	pickup->weapon = weapon;
+    pickup->can_play_sound = true;
 	body_id->self = pickup;
 	return pickup;
 }

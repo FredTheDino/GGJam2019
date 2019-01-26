@@ -50,6 +50,7 @@ struct Body
 
 	bool trigger;
 	PhysicsCallback overlap;
+    PhysicsCallback overlapnt; // When it un-overlaps
   void *self;
   int type;
 };
@@ -82,6 +83,7 @@ struct PhysicsWorld
 	u16 uid_counter; // So it won't overflow.
 
 	List<Overlap> overlaps;
+    List<Overlap> overlaps_prev; // For body overlapn't
 	
 	f32 timer;
 	f32 timestep;
