@@ -172,7 +172,7 @@ void run()
 	RandomState rng = seed(4);
 
 	Level level;
-	Player *player = level_load("res/simple.json", &level);
+	Player *player = level_load("res/map0.json", &level);
 
 	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
 	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
