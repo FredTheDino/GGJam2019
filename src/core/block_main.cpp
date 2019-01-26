@@ -253,8 +253,11 @@ void run()
 					switch(player->weapon)
 					{
 						case JELLO: p.from_color = V4(0, 1, 0, 0.5f);
+									break;
 						case CARROT: p.from_color = V4(0.98f, 0.61f, 0.12f, 0.5f);
+									 break;
 						case ONION: p.from_color = V4(0.8f, 0.6f, 0, 0.5f);
+									break;
 					}
 					p.to_color = V4(0, 0, 0, 0);
 					p.angular_velocity = random_real_in_range(&rng, -1.0f, 1.0f);
