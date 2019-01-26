@@ -7,6 +7,8 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 	if (other->inverse_mass == 0 || other->inverse_mass == JELLO_INV_MASS)
 		return true;
 
+	Jello *jello = (Jello*) self->self;
+
 	other->velocity.y = BOUNCE_SPEED;
 	
     play_sound_perturbed(audio_splat, 1, 1, 0.5, 1);
@@ -38,6 +40,7 @@ void update_jellos(List<Jello*> *jellos, f32 delta)
 	{
 		Jello *jello = (*jellos)[i]; 
 		jello->alive_time += delta;
+		jello->body_id->velocity = V2(0, 0);
 
 		if (jello->alive_time > JELLO_ALIVE_TIME) 
 		{
