@@ -16,6 +16,10 @@
 #endif
 
 #define GRAVITY 20
+#define PLAYER_TYPE 1
+#define SHOT_TYPE 2
+#define JELLO_TYPE 3
+#define PICKUP_TYPE 4
 
 #include "block_main.h"
 #include "block_id.h"
@@ -61,6 +65,7 @@
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
 #include "../game/jello.cpp"
+#include "../game/pickup.cpp"
 #include "../game/level_loader.cpp"
 
 void initalize_libraries()
@@ -162,6 +167,10 @@ void run()
 
 	List<Shot*> shots = create_list<Shot*>(5); 
 	List<Jello*> jellos = create_list<Jello*>(20); 
+	List<Pickup*> pickups = create_list<Pickup*>(10); 
+
+	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
+	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
 
 	RandomState rng = seed(4);
 
@@ -389,6 +398,7 @@ void run()
 			draw_particles(&system);
 			player_draw(&player);
 			shots_draw(&shots);
+			pickups_draw(&pickups);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));

@@ -4,7 +4,10 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 {
 	ASSERT(self->self);
 
-	if (other->inverse_mass == 0 || other->inverse_mass == JELLO_INV_MASS)
+	if (other->type == PICKUP_TYPE)
+		return false;
+
+	if (other->inverse_mass == 0 || other->type == JELLO_TYPE)
 		return true;
 
 	Jello *jello = (Jello*) self->self;
@@ -21,6 +24,7 @@ Jello *create_jello(Shot *shot)
 	body_id->position = shot->body_id->position;
 	body_id->scale = V2(1, 0.2f);
 	body_id->overlap = jello_on_collision;
+	body_id->type = JELLO_TYPE;
 	Jello *jello = push_struct(Jello);
 	jello->body_id = body_id;
 	body_id->self = jello;
