@@ -11,7 +11,7 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 
 	other->velocity.y = BOUNCE_SPEED;
 	
-    play_sound_perturbed(audio_splat, 1, 1, 0.5, 1);
+    play_sound_perturbed(audio_splat, 1, 1, 0.25, 0.1);
 
 	return false;
 }

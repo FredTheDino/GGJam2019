@@ -10,4 +10,5 @@ void load_assets() {
     // Audio
     audio_pew   = load_asset(AFT_SOUND,     "res/sound/pew_mono.wav");
     audio_splat = load_asset(AFT_SOUND,     "res/sound/splat_mono.wav");
+    audio_pickup= load_asset(AFT_SOUND,     "res/sound/pickup_mono.wav");
 }
