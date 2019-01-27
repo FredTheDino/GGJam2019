@@ -12,7 +12,6 @@ struct Player {
 	// Body
 	BodyID body_id;
 	Vec2 respawn_pos;
-	int deaths;
 	// Shooting
 	f32 shot_time;
 	ShotKind weapon;
@@ -63,13 +62,13 @@ Player *create_player()
 	player->weapon = JELLO;
 	player->face_direction = 1;
 	player->animation_timer = 0;
-	player->deaths = 0;
 	return player;
 }
 
 void player_respawn(Player *player)
 {
 	player->body_id->position = player->respawn_pos;
+	deaths += 1;
 }
 
 void player_update(Player *player, f32 delta) 
