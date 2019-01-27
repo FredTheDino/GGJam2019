@@ -74,6 +74,7 @@ u32 deaths = 0;
 #include "../game/pickup.cpp"
 #include "../game/kill_floor.cpp"
 #include "../game/level_loader.cpp"
+#include "../game/enemy.cpp"
 #include "../game/particles.cpp"
 
 void initalize_libraries()
@@ -174,8 +175,14 @@ void run()
 
 	load_assets();
 
+	//List<Shot*> shots = create_list<Shot*>(5); 
+	//List<Jello*> jellos = create_list<Jello*>(20); 
+	//List<Pickup*> pickups = create_list<Pickup*>(10); 
+
 	Level level = {};
 	level_load("res/tut0.json", &level);
+	Enemy *enemy = create_enemy(level.player->body_id->position + V2(2, 1));
+
 
 	// 
 	// Graphcis
@@ -206,9 +213,9 @@ void run()
 	add_binding(input, CBUTTON(X), "camera_shake");
 
 	add_input(input, "right");
-	add_binding(input, KEY(d),  1, "right");
+	add_binding(input, KEY(RIGHT),  1, "right");
 	add_input(input, "left");
-	add_binding(input, KEY(a), -1, "left");
+	add_binding(input, KEY(LEFT), -1, "left");
 
 	add_input(input, "y-move");
 	add_binding(input, KEY(w), -1, "y-move");
@@ -283,6 +290,8 @@ void run()
 			if (player->body_id->position.y < -100) {
 				player_respawn(player);
 			}
+
+            enemy_update(enemy, game.clock.delta);
 			
 			// Physics update.
 			update_world(game.clock.delta);
@@ -299,6 +308,7 @@ void run()
 
 			draw_particles(&particle_system);
 			player_draw(player);
+			enemy_draw(enemy);
 			shots_draw(&level.shots);
 			pickups_draw(&level.pickups);
 			jellos_draw(&level.jellos);
