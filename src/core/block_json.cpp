@@ -352,7 +352,7 @@ namespace JSON
 				}
 			case 'f': // Assume false.
 				{
-					for (u32 i = 0; i < 4; i++)
+					for (u32 i = 0; i < 5; i++)
 						if (stream->step())
 							STREAM_ERROR_EOF(*stream);
 					Value value = {ValueType::J_BOOL};

@@ -175,15 +175,8 @@ void run()
 
 	load_assets();
 
-	//List<Shot*> shots = create_list<Shot*>(5); 
-	//List<Jello*> jellos = create_list<Jello*>(20); 
-	//List<Pickup*> pickups = create_list<Pickup*>(10); 
-
 	Level level = {};
-	level_load("res/map1.json", &level);
-
-	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
-	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
+	level_load("res/simple.json", &level);
 
 	// 
 	// Graphcis
@@ -292,7 +285,7 @@ void run()
 			if (player->body_id->position.y < -100) {
 				player_respawn(player);
 			}
-			
+
 			// Physics update.
 			update_world(game.clock.delta);
 			if (player != level.player)
@@ -313,19 +306,18 @@ void run()
 			jellos_draw(&level.jellos);
 			killfloors_draw(&level.killfloors);
 			enemies_draw(&level.enemies);
-			
-			debug_line(V2(1, 1), V2(-1, -1));
-			debug_line(V2(-1, 1), V2(1, -1));
 
 			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
-			if (value("show"))
+#if 0
+			if (value("show") || false)
 			{
 				debug_draw_world();
 				// Draw debug primitives.
 				debug_draw();
 			}
+#endif
 
 			// Tell SDL to update the graphics.
 			SDL_GL_SwapWindow(game.window);

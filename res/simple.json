@@ -31,18 +31,6 @@
                 }, 
                 {
                  "height":0,
-                 "id":21,
-                 "name":"jello-spawner",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":40,
-                 "y":0
-                }, 
-                {
-                 "height":0,
                  "id":22,
                  "name":"end",
                  "point":true,
@@ -50,7 +38,7 @@
                         {
                          "name":"next",
                          "type":"string",
-                         "value":"res\/map0.json"
+                         "value":"res\/tut0.json"
                         }],
                  "rotation":0,
                  "type":"",
