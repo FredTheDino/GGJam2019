@@ -69,6 +69,7 @@ void player_respawn(Player *player)
 {
 	player->body_id->position = player->respawn_pos;
 	deaths += 1;
+    play_sound(audio_death, 1, 1);
 }
 
 void player_update(Player *player, f32 delta) 
