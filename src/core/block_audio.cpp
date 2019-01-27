@@ -55,8 +55,12 @@ void audio_loop(void *userdata, u8 *byte_stream, s32 num_bytes)
 			{
 				if (source->sample > buffer.num_samples)
 				{
-					source->playing = false;
-					break;
+                    if(source->loop){
+                        source->sample = 0;
+                    } else {
+					    source->playing = false;
+					    break;
+                    }
 				}
 				AudioStream low  = buffer.stero[current_sample(buffer, source->sample)];
 				source->sample += sample_advance;
@@ -106,7 +110,7 @@ void audio_loop(void *userdata, u8 *byte_stream, s32 num_bytes)
 	}
 }
 
-u64 play_sound(AssetID sound, f32 volume, f32 pitch)
+u64 play_sound(AssetID sound, f32 volume, f32 pitch, bool loop)
 {
 	ASSERT(volume);
 	ASSERT(pitch);
@@ -117,6 +121,7 @@ u64 play_sound(AssetID sound, f32 volume, f32 pitch)
 		if (source->playing)
 			continue;
 		source->playing = true;
+        source->loop = loop;
 		source->sound   = sound;
 		source->volume  = volume;
 		source->pitch   = pitch;
@@ -138,6 +143,7 @@ u64 play_sound_at(AssetID sound, Vec3 pos, f32 volume, f32 pitch)
 		AudioSource *source = audio.sources + source_id;
 		if (source->playing)
 			continue;
+        source->loop        = false;
 		source->playing 	= true;
 		source->positional 	= true;
 		source->position = pos;

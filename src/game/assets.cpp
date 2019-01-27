@@ -8,6 +8,7 @@ AssetID audio_splat;
 AssetID audio_pickup;
 AssetID audio_hop;
 AssetID audio_death;
+AssetID audio_bg;
 
 #define SPRITE(id) generate_sprite(id, 32, 32)
 
@@ -31,4 +32,5 @@ void load_assets() {
     audio_pickup= load_asset(AFT_SOUND,     RES_AUDIO "pickup_mono.wav");
     audio_hop   = load_asset(AFT_SOUND,     RES_AUDIO "hop_mono.wav");
     audio_death = load_asset(AFT_SOUND,     RES_AUDIO "deth_short_mono.wav");
+    audio_bg    = load_asset(AFT_SOUND,     RES_AUDIO "bg_music_mono.wav");
 }

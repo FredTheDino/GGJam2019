@@ -13,6 +13,7 @@ struct AudioStream
 struct AudioSource
 {
 	bool playing;
+    bool loop;
 
 	bool positional;
 	Vec3 position;
@@ -53,7 +54,7 @@ void initalize_audio()
 void audio_loop(void *userdata, u8 *byte_stream, s32 num_bytes);
 
 // The sound is simply played
-u64 play_sound(AssetID sound, f32 volume=1.0f, f32 pitch=1.0f);
+u64 play_sound(AssetID sound, f32 volume=1.0f, f32 pitch=1.0f, bool loop=false);
 
 // The sound is played at the position
 u64 play_sound_at(AssetID sound, Vec3 pos, f32 volume=1.0f, f32 pitch=1.0f);

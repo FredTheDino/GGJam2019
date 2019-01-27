@@ -177,6 +177,7 @@ void run()
 
 	Level level = {};
 	level_load("res/simple.json", &level);
+    play_sound(audio_bg, 1, 1, true);
 
 	// 
 	// Graphcis
