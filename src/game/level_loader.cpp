@@ -21,6 +21,7 @@ struct Level
 	List<Shot*> shots;
 	List<Jello*> jellos;
 	List<Pickup*> pickups;
+	List<KillFloor*> killfloors;
 
 	Player *player;
 
@@ -60,6 +61,13 @@ void level_load(const char *path, Level *level)
 			pop_memory(level->shots[i]);
 		}
 		level->shots.clear();
+
+		for (u32 i = 0; i < level->killfloors.length; i++)
+		{
+			pop_memory(level->killfloors[i]);
+		}
+		level->killfloors.clear();
+
 		pop_memory((void *) level->end.next_level);
 
 		pop_memory(level->player);
@@ -71,6 +79,7 @@ void level_load(const char *path, Level *level)
 
 	level->jellos = create_list<Jello*>(20); 
 	level->pickups = create_list<Pickup*>(10);
+	level->killfloors = create_list<KillFloor*>(20);
 	level->map = create_tilemap(spritesheet);
 	level->bodies = create_list<BodyID>(10);
 	const char *file = read_entire_file(path);
@@ -91,6 +100,7 @@ void level_load(const char *path, Level *level)
 		if (objects[i]["name"].string.data[0] == 'p')
 		{
 			level->player->body_id->position = pos;
+			level->player->respawn_pos = pos;
 		}
 		else if (objects[i]["name"].string.data[0] == 't')
 		{
@@ -104,11 +114,14 @@ void level_load(const char *path, Level *level)
 		else if (objects[i]["name"].string.data[0] == 'j')
 		{
 			create_pickup(&level->pickups, pos, JELLO);
-
 		}
 		else if (objects[i]["name"].string.data[0] == 'o')
 		{
 			create_pickup(&level->pickups, pos, ONION);
+		}
+		else if (objects[i]["name"].string.data[0] == 'k')
+		{
+			create_killfloor(&level->killfloors, pos + V2(0.5f, -0.5f));
 		}
 		else if (objects[i]["name"].string.data[0] == 'e')
 		{

@@ -20,6 +20,7 @@
 #define SHOT_TYPE 2
 #define JELLO_TYPE 3
 #define PICKUP_TYPE 4
+#define KILLFLOOR_TYPE 6
 
 #include "block_main.h"
 #include "block_id.h"
@@ -59,6 +60,8 @@
 
 #include "block_physics.cpp"
 
+u32 deaths = 0;
+
 #include "../game/assets.cpp"
 
 #include "../game/end.cpp"
@@ -69,6 +72,7 @@
 #include "../game/shoot.cpp"
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
+#include "../game/kill_floor.cpp"
 #include "../game/level_loader.cpp"
 #include "../game/particles.cpp"
 
@@ -172,7 +176,6 @@ void run()
 
 	Level level = {};
 	level_load("res/map2.json", &level);
-	level.player->respawn_pos = level.player->body_id->position;
 
 	// 
 	// Graphcis
