@@ -15,17 +15,19 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 	{
 		Vec2 pos;
 		if (other->type == PLAYER_TYPE){
-			pos = ((Player*)other)->body_id->position;
             jello->jumped += 1;
             play_sound_perturbed(audio_splat, 1, 1, 0.05, 0.075);
+			other->velocity.y = BOUNCE_SPEED + 7;
         }
         else
-			pos = ((Shot*)other)->body_id->position;
+		{
+			other->velocity.y = BOUNCE_SPEED;
+		}
 
 		for (int i = 0; i < 20; i++)
 		{
 			Particle p = {};
-			p.position = pos;
+			p.position = ((Jello*)self)->body_id->position;
 			p.lifetime = 2;
 			p.from_color = V4(0, 1, 0, 1);
 			p.to_color = V4(0, 1, 0, 1);
@@ -36,13 +38,12 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 		}
 	}
 
-	other->velocity.y = BOUNCE_SPEED;
 	
 	return false;
 }
 Jello *create_jello(Shot *shot)
 {
-	BodyID body_id = create_body(0xFF, 128);
+	BodyID body_id = create_body(0xFF, 0, 0.1f, 0.1f, true);
 	body_id->position = shot->body_id->position;
 	body_id->scale = V2(1, 0.2f);
 	body_id->overlap = jello_on_collision;
