@@ -180,7 +180,7 @@ void run()
 	//List<Pickup*> pickups = create_list<Pickup*>(10); 
 
 	Level level = {};
-	level_load("res/map2.json", &level);
+	level_load("res/map0.json", &level);
 	Enemy *enemy = create_enemy(level.player->body_id->position + V2(2, 1));
 
 	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
@@ -314,6 +314,7 @@ void run()
 			shots_draw(&level.shots);
 			pickups_draw(&level.pickups);
 			jellos_draw(&level.jellos);
+			killfloors_draw(&level.killfloors);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));

@@ -121,7 +121,7 @@ void level_load(const char *path, Level *level)
 		}
 		else if (objects[i]["name"].string.data[0] == 'k')
 		{
-			create_killfloor(&level->killfloors, pos + V2(0.5f, -0.5f));
+			create_killfloor(&level->killfloors, pos + V2(0.45f, -0.5f));
 		}
 		else if (objects[i]["name"].string.data[0] == 'e')
 		{
