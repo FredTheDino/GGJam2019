@@ -13,7 +13,7 @@ bool killfloor_on_collision(Body *self, Body *other, Overlap overlap) {
 KillFloor *create_killfloor(List<KillFloor*> *killfloors, Vec2 position) {
 	BodyID body_id = create_body(0xFF, 0, 0.1f, 0.1f, true);
 	body_id->position = position;
-	body_id->scale = V2(1, 1);
+	body_id->scale = V2(0.8f, 0.4f);
 	body_id->overlap = killfloor_on_collision;
 	KillFloor *killfloor = push_struct(KillFloor);
 	killfloor->body_id = body_id;
@@ -35,6 +35,6 @@ void killfloors_draw (List<KillFloor*> *killfloors)
 		KillFloor *killfloor = (*killfloors)[i];
 		BodyID body_id = killfloor->body_id;
 		u32 sprite = 131;
-		draw_sprite(sprite, body_id->position, body_id->scale, 0);
+		draw_sprite(sprite, body_id->position, V2(1,1), 0);
 	}
 }
