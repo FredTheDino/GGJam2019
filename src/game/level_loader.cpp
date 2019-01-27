@@ -22,6 +22,7 @@ struct Level
 	List<Jello*> jellos;
 	List<Pickup*> pickups;
 	List<KillFloor*> killfloors;
+	List<Enemy*> enemies;
 
 	Player *player;
 
@@ -68,6 +69,12 @@ void level_load(const char *path, Level *level)
 		}
 		level->killfloors.clear();
 
+		for (u32 i = 0; i < level->enemies.length; i++)
+		{
+			pop_memory(level->enemies[i]);
+		}
+		level->enemies.clear();
+
 		pop_memory((void *) level->end.next_level);
 
 		pop_memory(level->player);
@@ -82,6 +89,7 @@ void level_load(const char *path, Level *level)
 	level->killfloors = create_list<KillFloor*>(20);
 	level->map = create_tilemap(spritesheet);
 	level->bodies = create_list<BodyID>(10);
+	level->enemies = create_list<Enemy*>(10);
 	const char *file = read_entire_file(path);
 	ASSERT(file);
 	Value value = parse_object(file);
@@ -104,7 +112,7 @@ void level_load(const char *path, Level *level)
 		}
 		else if (objects[i]["name"].string.data[0] == 't')
 		{
-			print("todo-spawn tbone\n");
+			create_enemy(&level->enemies, pos);
 		}
 		else if (objects[i]["name"].string.data[0] == 'c')
 		{
@@ -121,7 +129,7 @@ void level_load(const char *path, Level *level)
 		}
 		else if (objects[i]["name"].string.data[0] == 'k')
 		{
-			create_killfloor(&level->killfloors, pos + V2(0.5f, -0.5f));
+			create_killfloor(&level->killfloors, pos + V2(0.45f, -0.5f));
 		}
 		else if (objects[i]["name"].string.data[0] == 'e')
 		{
