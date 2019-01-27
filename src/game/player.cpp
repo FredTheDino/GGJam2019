@@ -1,9 +1,11 @@
 #define PLAYER_ACCELERATION 10.0f
+#define PLAYER_AIR_ACCELERATION 3.0f
 #define PLAYER_DEACCELERATION 40.0f
 #define PLAYER_MAX_SPEED 5
-#define PLAYER_JUMP_SPEED 7
+#define PLAYER_JUMP_SPEED 8
+#define PLAYER_JUMP_TIME 0.6f
 #define PLAYER_SHOT_DELAY 0.3f
-#define MAX_KAYOTEE_TIME 1.0f
+#define MAX_KAYOTEE_TIME 0.1f
 
 struct Player {
 	// Body
@@ -13,6 +15,7 @@ struct Player {
 	ShotKind weapon;
 	// Jumping
 	bool jumped;
+	f32 jump_timer;
 	bool grounded;
 	bool bounced;
 	f32 kayotee_time;
@@ -74,7 +77,8 @@ void player_update(Player *player, f32 delta)
 
 	f32 acc_direction = value("right") + value("left");
 	if (acc_direction) {
-		vel.x += PLAYER_ACCELERATION * acc_direction;
+		f32 speed = player->grounded ? PLAYER_ACCELERATION : PLAYER_AIR_ACCELERATION;
+		vel.x += speed * acc_direction;
 		player->face_direction = sign_no_zero(vel.x);
 	}
 	else 
@@ -110,12 +114,20 @@ void player_update(Player *player, f32 delta)
 	if (player->kayotee_time < MAX_KAYOTEE_TIME && pressed("jump")) 
 	{
 		shake_camera(0.01f);
-		vel.y = PLAYER_JUMP_SPEED;
+		player->jump_timer = 0;
 		player->jumped = true;
 		player->kayotee_time = MAX_KAYOTEE_TIME;
         play_sound(audio_hop, 0.3, 1);
 		jump_particles(player);
+		vel.y = PLAYER_JUMP_SPEED;
 	}
+
+	if (down("jump") && player->jump_timer < PLAYER_JUMP_TIME)
+	{
+		vel.y += PLAYER_JUMP_SPEED * delta;
+	}
+	player->jump_timer += delta;
+
 	player->grounded = false;
 
 	if (player->bounced)
