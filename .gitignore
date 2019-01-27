@@ -3,3 +3,5 @@ tmp
 tags
 .
 .gdb_history
+*.aup
+*.au

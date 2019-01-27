@@ -196,14 +196,44 @@
                 {
                  "height":0,
                  "id":49,
-                 "name":"",
+                 "name":"player",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
                  "x":-120,
-                 "y":-6
+                 "y":-8
+                }, 
+                {
+                 "height":0,
+                 "id":50,
+                 "name":"end",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"next",
+                         "type":"string",
+                         "value":"res\/simple.json"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":136,
+                 "y":-56
+                }, 
+                {
+                 "height":0,
+                 "id":51,
+                 "name":"kill",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":-64,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -269,20 +299,20 @@
                  "x":16,
                  "y":0
                 }],
-         "height":1184,
+         "height":32,
          "id":1,
          "name":"Tile Layer 1",
          "opacity":1,
          "startx":-32,
-         "starty":-1168,
+         "starty":-16,
          "type":"tilelayer",
          "visible":true,
-         "width":240,
+         "width":64,
          "x":0,
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":50,
+ "nextobjectid":53,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.2.1",

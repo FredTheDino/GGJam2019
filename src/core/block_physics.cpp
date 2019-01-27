@@ -7,7 +7,8 @@ PhysicsWorld initalize_world()
 	world.bodies = create_list<Body>(32);
 	world.limits = create_list<Limit>(32);
 	world.overlaps = create_list<Overlap>(32);
-	world.timestep = 1.0f / 120.0f;
+	world.overlaps_prev = create_list<Overlap>(32);
+    world.timestep = 1.0f / 120.0f;
 
 	world.uid_counter = 32;
 	
@@ -163,7 +164,6 @@ BodyID new_body_id(PhysicsWorld *world)
 	}
 	ASSERT(id.pos >= 0);
 	world->bodies_highest = maximum((s32) world->bodies_highest, id.pos);
-	print("new body %d:%d\n", id.pos, id.uid);
 	return id;
 }
 BodyID new_body_id()
@@ -235,6 +235,8 @@ BodyID create_body(PhysicsWorld *world, u32 layer,
 	body.trigger = trigger;
 	body.bounce = bounce;
 	body.layer = layer;
+    ASSERT(body.overlap == 0);
+    ASSERT(body.overlapnt == 0);
 	if (mass == 0.0)
 		body.inverse_mass = 0.0f;
 	else
@@ -513,7 +515,6 @@ void solve(PhysicsWorld *world, Overlap overlap, f32 delta)
 	f32 normal_velocity = dot(normal, relative_velocity);
 	if (normal_velocity < 0)
 	{
-		print("Nope!\n");
 		return;
 	}
 
@@ -568,6 +569,7 @@ void update_world(PhysicsWorld *world, f32 delta)
 				recalculate_highest(world);
 				continue;
 			}
+            ASSERT(body->overlapnt != (PhysicsCallback) 0x70);
 			//ASSERT(body);
 
 #if 0
@@ -631,11 +633,48 @@ void update_world(PhysicsWorld *world, f32 delta)
 					if (a->overlap(a, b, overlap))
 						continue;
 				if (b->overlap)
-					if (b->overlap(b, a, {b->id, a->id, overlap.depth, -overlap.normal, overlap.is_valid}))
+					if (b->overlap(b, a, {b->id, a->id, overlap.depth, -overlap.normal, true})) // No need to get a bool that we know the value of ;)
 						continue;
 				solve(world, overlap, delta);
 			}
 		}
+#if 1
+        u32 prev_size = world->overlaps_prev.length;
+        u32 cur_size = world->overlaps.length;
+        bool found;
+        for(u32 i = 0; i < prev_size; ++i){
+            Overlap overlap = world->overlaps_prev[i];
+            if (!find_body_ptr(overlap.a)) continue;
+            if (!find_body_ptr(overlap.b)) continue;
+            if (overlap.a->overlapnt || overlap.b->overlapnt){
+                Body *a = find_body_ptr(overlap.a);
+                Body *b = find_body_ptr(overlap.b);
+                found = false;
+                for(u32 j = 0; j < cur_size; ++j){
+                    if (!find_body_ptr(world->overlaps[j].a)) continue;
+                    if (!find_body_ptr(world->overlaps[j].b)) continue;
+                    bool regular_exists = a->id == world->overlaps[j].a->id && b->id == world->overlaps[j].b->id;
+                    bool reversed_exists = a->id == world->overlaps[j].b->id && b->id == world->overlaps[j].a->id;
+                    if(regular_exists || reversed_exists){
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) continue; // No overlap change
+                if(a->overlapnt)
+                    a->overlapnt(a, b, overlap);
+                if(b->overlapnt)
+                    b->overlapnt(b, a, {b->id, a->id, overlap.depth, -overlap.normal, true});
+            }
+        }
+
+        {
+            List<Overlap> otherlaps = world->overlaps;
+            world->overlaps = world->overlaps_prev;
+            world->overlaps_prev = otherlaps;
+        }
+
+    #endif
 
 		for (u32 i = 0; i < world->bodies_highest; i++)
 		{

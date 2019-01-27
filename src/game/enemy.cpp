@@ -9,6 +9,8 @@ struct Enemy {
     BodyID body_id;
     u32 hp;
     s32 facing;
+	bool crying;
+	f32 animation_timer;
 };
 
 // Fixed your buggy ass code, you lazy son of a gun. <3
@@ -28,7 +30,6 @@ bool enemy_callback(Body *self, Body *other, Overlap overlap)
 	s32 dir = overlap.normal.x;
 	if (dir)
 		enemy->facing = -dir;
-	printf("enemy now facing: %d\n", enemy->facing);
 	return 0;
     }
     return 0;
@@ -45,8 +46,26 @@ Enemy *create_enemy(Vec2 position)
     enemy->body_id->overlap = enemy_callback;
     //enemy->body_id->velocity.x = ENEMY_MAX_SPEED;
     enemy->hp = ENEMY_START_HP;
+	enemy->facing = 1;
+	enemy->animation_timer = 0;
 
     return enemy;
+}
+
+void enemy_draw(Enemy *enemy)
+{
+	int sprite_index = 128;
+	if ((s32)(enemy->animation_timer / 0.5f) % 2 == 0)
+	{
+		sprite_index = 129;
+	}
+
+	if (enemy->crying && (s32)(enemy->animation_timer / 0.2f) % 2 == 0)
+	{
+		sprite_index += 4;
+	}
+
+    draw_sprite(sprite_index, enemy->body_id->position, hadamard(enemy->body_id->scale, V2(enemy->facing,1)));
 }
 
 void destroy_enemy(Enemy *enemy)
@@ -55,16 +74,11 @@ void destroy_enemy(Enemy *enemy)
     pop_memory(enemy);
 }
 
-void enemy_draw(Enemy *enemy)
-{
-    BodyID body_id = enemy->body_id;
-    draw_sprite(ENEMY_SPRITE, body_id->position, V2(enemy->facing, 1));
-}
-
 void enemy_update(Enemy *enemy, f32 delta)
 {
     BodyID body_id = enemy->body_id;
     Vec2 *vel = &body_id->velocity;
     vel->y -= GRAVITY * delta;
     vel->x = ENEMY_MAX_SPEED * enemy->facing;
+    enemy->animation_timer += delta;
 }

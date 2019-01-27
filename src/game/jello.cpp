@@ -1,8 +1,9 @@
-#define BOUNCE_SPEED 20
+#define BOUNCE_SPEED 17
 
 bool jello_on_collision(Body *self, Body *other, Overlap overlap) 
 {
-	ASSERT(self->self);
+    Jello *jello = (Jello*) self->self;
+	ASSERT(jello); // Assert that the jello IS, in fact, jello
 
 	if (other->type == PICKUP_TYPE)
 		return false;
@@ -13,43 +14,44 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 	if (other->type == PLAYER_TYPE || other->type == SHOT_TYPE) 
 	{
 		Vec2 pos;
-		if (other->type == PLAYER_TYPE)
-			pos = ((Player*)other)->body_id->position;
-		else
-			pos = ((Shot*)other)->body_id->position;
+		if (other->type == PLAYER_TYPE){
+            jello->jumped += 1;
+            play_sound_perturbed(audio_splat, 1, 1, 0.05, 0.075);
+			other->velocity.y = BOUNCE_SPEED + 7;
+        }
+        else
+		{
+			other->velocity.y = BOUNCE_SPEED;
+		}
 
 		for (int i = 0; i < 20; i++)
 		{
 			Particle p = {};
-			p.position = pos;
-			p.lifetime = 10;
+			p.position = ((Jello*)self)->body_id->position;
+			p.lifetime = 2;
 			p.from_color = V4(0, 1, 0, 1);
 			p.to_color = V4(0, 1, 0, 1);
-			p.linear_velocity = random_vec2(&rnd, V2(-1, 0.5f), V2(1, 1));
+			p.linear_velocity = random_vec2(&rnd, V2(-1, 2), V2(1, 4));
 			p.scale = V2(0.1f, 0.1f);
-			p.gravity = GRAVITY/900.0f;
+			p.gravity = GRAVITY/150.0f;
 			add_particle(&particle_system, p);
 		}
 	}
 
-	Jello *jello = (Jello*) self->self;
-
-	other->velocity.y = BOUNCE_SPEED;
 	
-    play_sound_perturbed(audio_splat, 1, 1, 0.5, 1);
-
 	return false;
 }
 Jello *create_jello(Shot *shot)
 {
-	BodyID body_id = create_body(0xFF, 128);
+	BodyID body_id = create_body(0xFF, 0, 0.1f, 0.1f, true);
 	body_id->position = shot->body_id->position;
 	body_id->scale = V2(1, 0.2f);
 	body_id->overlap = jello_on_collision;
 	body_id->type = JELLO_TYPE;
 	Jello *jello = push_struct(Jello);
 	jello->body_id = body_id;
-	body_id->self = jello;
+	jello->jumped = 0;
+    body_id->self = jello;
 	return jello;
 }
 
@@ -62,13 +64,13 @@ void destroy_jello(Jello *jello)
 void update_jellos(List<Jello*> *jellos, f32 delta)
 {
 
-	for (s32 i = jellos->length-1; i >= 0; i--) 
+	for (s32 i = jellos->length-1; i >= 0; --i) 
 	{
 		Jello *jello = (*jellos)[i]; 
 		jello->alive_time += delta;
 		jello->body_id->velocity = V2(0, 0);
 
-		if (jello->alive_time > JELLO_ALIVE_TIME) 
+		if (jello->alive_time > JELLO_ALIVE_TIME || jello->jumped >= 2) 
 		{
 			destroy_jello(jello);
 			jellos->remove(i);
@@ -80,8 +82,7 @@ void jellos_draw (List<Jello*> *jellos)
 {
 	for (u32 i = 0; i < jellos->length; i++) 
 	{
-		Texture texture = find_asset(pixel).texture;
 		BodyID body_id = (*jellos)[i]->body_id;
-		draw_sprite(texture, body_id->position, body_id->scale, 0);
+		draw_sprite(32*3+1, body_id->position, V2(1.0f, 0.5f));
 	}
 }

@@ -1,11 +1,11 @@
-#define SHOT_ALIVE_TIME 1
+#define SHOT_ALIVE_TIME 3
 #define SHOT_SPEED 10
 #define JELLO_INV_MASS 1.0f/128
 
 enum ShotKind {
     JELLO,
-    CARROT,
-    ONION
+    ONION,
+    CARROT
 };
 
 struct Jello;

@@ -1,0 +1,18 @@
+{
+   <driver>
+   Memcheck:Addr2
+   ...
+   obj:/usr/*lib*/dri/i965_dri.so
+}
+{
+   <driver>
+   Memcheck:Addr4
+   ...
+   obj:/usr/*lib*/dri/i965_dri.so
+}
+{
+   <driver>
+   Memcheck:Addr8
+   ...
+   obj:/usr/*lib*/dri/i965_dri.so
+}

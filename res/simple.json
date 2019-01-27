@@ -15,7 +15,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":40,
+                 "x":16,
                  "y":0
                 }, 
                 {
@@ -28,6 +28,36 @@
                  "width":88,
                  "x":0,
                  "y":5
+                }, 
+                {
+                 "height":0,
+                 "id":21,
+                 "name":"jello-spawner",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":40,
+                 "y":0
+                }, 
+                {
+                 "height":0,
+                 "id":22,
+                 "name":"end",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"next",
+                         "type":"string",
+                         "value":"res\/map0.json"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -64,7 +94,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":19,
+ "nextobjectid":23,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.2.1",

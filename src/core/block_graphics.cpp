@@ -33,6 +33,11 @@ void destroy_graphics(Context *gfx)
 	glDeleteProgram(gfx->vertex_buffer);
 }
 
+void shake_camera(f32 shake)
+{
+	game.camera->shake_timer += shake;
+}
+
 void frame(Context *gfx, Camera *camera, Clock clock)
 {
 	// Disabled the debug draw.
@@ -63,7 +68,7 @@ void frame(Context *gfx, Camera *camera, Clock clock)
 	glUniform2f(u_loc("camera_position"), shake_position.x, shake_position.y);
 	glUniform1f(u_loc("camera_rotation"), shake_rotation);
 	glUniform1f(u_loc("camera_zoom"), shake_zoom);
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.38f, 0.72f, 0.71f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

@@ -28,6 +28,14 @@ TileMap create_tilemap(AssetID spritesheet)
 	return map;
 }
 
+void destroy_tilemap(TileMap *map)
+{
+	for (u32 i = 0; i < map->chunks.length; i++)
+	{
+		glDeleteVertexArrays(1, &map->chunks[i].vertex_array);
+	}
+}
+
 void add_chunk(TileMap *map, Vec2 position, List<Vec4> verts)
 {
 	// Each quad is 2 2d-coordinates.

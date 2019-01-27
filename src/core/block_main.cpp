@@ -20,6 +20,7 @@
 #define SHOT_TYPE 2
 #define JELLO_TYPE 3
 #define PICKUP_TYPE 4
+#define KILLFLOOR_TYPE 6
 
 #include "block_main.h"
 #include "block_id.h"
@@ -59,18 +60,22 @@
 
 #include "block_physics.cpp"
 
-#include "../game/assets.cpp"
-ParticleSystem particle_system = create_particle_system(pixel);
-RandomState rnd = seed(4);
+u32 deaths = 0;
 
+#include "../game/assets.cpp"
+
+#include "../game/end.cpp"
 #include "../game/shoot.h"
 #include "../game/jello.h"
+#include "../game/particles.h"
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
+#include "../game/kill_floor.cpp"
 #include "../game/level_loader.cpp"
 #include "../game/enemy.cpp"
+#include "../game/particles.cpp"
 
 void initalize_libraries()
 {
@@ -111,7 +116,7 @@ void initalize_libraries()
 	want.freq = AUDIO_FREQ;
 	want.format = AUDIO_F32;
 	want.channels = 2;
-	want.samples = 4096;
+	want.samples = 1024;
 	want.callback = audio_loop;
 	// TODO: This might need to be switchable
 	game.device = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0); 
@@ -153,6 +158,7 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+	particle_system = create_particle_system(pixel);
 
 	{ 
 		List<Vec2> points = create_list<Vec2>(4);
@@ -169,15 +175,15 @@ void run()
 
 	load_assets();
 
-	List<Shot*> shots = create_list<Shot*>(5); 
-	List<Jello*> jellos = create_list<Jello*>(20); 
-	List<Pickup*> pickups = create_list<Pickup*>(10); 
+	//List<Shot*> shots = create_list<Shot*>(5); 
+	//List<Jello*> jellos = create_list<Jello*>(20); 
+	//List<Pickup*> pickups = create_list<Pickup*>(10); 
 
-	Level level;
-	Player *player = level_load("res/map0.json", &level);
-	Enemy *enemy = create_enemy(player->body_id->position + V2(2, 1));
+	Level level = {};
+	level_load("res/map2.json", &level);
+	Enemy *enemy = create_enemy(level.player->body_id->position + V2(2, 1));
 
-	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
+	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
 	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
 
 	// 
@@ -238,6 +244,8 @@ void run()
 	game.running = 1;
 	while (game.running)
 	{
+		Player *player = level.player;
+
 		swap_temp_memory();
 		update_game_clock(&game.clock);
 		//count_fps();
@@ -248,18 +256,21 @@ void run()
 
 		// Update
 		{
-			snow_time += game.clock.delta;
-			if (snow_time > 0.20) {
-				snow_time = 0;
-				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -10.0f, 10.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
-				p.lifetime = 60;
-				p.from_color = V4(1, 1, 1, 0.8f);
-				p.to_color = V4(1, 1, 1, 0.8f);
-				p.scale = V2(0.1f, 0.1f);
-				p.is_sine = true;
-				p.gravity = GRAVITY/5000.0f;
-				add_particle(&particle_system, p);
+			// Snow particles
+			{
+				snow_time += game.clock.delta;
+				if (snow_time > 0.10) {
+					snow_time = 0;
+					Particle p = {};
+					p.position = player->body_id->position + V2(random_real_in_range(&rnd, -50.0f, 50.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
+					p.lifetime = 60;
+					p.from_color = V4(1, 1, 1, 0.8f);
+					p.to_color = V4(1, 1, 1, 0.8f);
+					p.scale = V2(0.1f, 0.1f);
+					p.is_sine = true;
+					p.gravity = GRAVITY/5000.0f;
+					add_particle(&particle_system, p);
+				}
 			}
 
 			if (pressed("quit")) 
@@ -267,96 +278,27 @@ void run()
 				game.running = 0;
 			}
 
-			if (pressed("shoot"))
-			{
-				for (int i = 0; i < 20; i++)
-				{
-					Particle p = {};
-					if (player->face_direction > 0)
-					{
-						p.position = player->body_id->position + V2(0.5f, 0);
-					}
-					else
-					{
-						p.position = player->body_id->position + V2(-0.5f, 0);
-					}
-					p.lifetime = 1;
-					switch(player->weapon)
-					{
-						case JELLO: 
-							p.from_color = V4(0, 1, 0, 0.5f);
-							break;
-						case CARROT:
-							p.from_color = V4(0.98f, 0.61f, 0.12f, 0.5f);
-							break;
-						case ONION: 
-							p.from_color = V4(0.8f, 0.6f, 0, 0.5f);
-							break;
-					}
-					p.to_color = V4(0, 0, 0, 0);
-					p.angular_velocity = random_real_in_range(&rnd, -1.0f, 1.0f);
-					p.linear_velocity = random_vec2(&rnd, V2(-0.5f, -0.5f), V2(0.5f, 0.5f));
-					p.scale = V2(0.2f, 0.2f);
-					add_particle(&particle_system, p);
-				}
-			}
-
-			if (player->bounced)
-			{
-				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -0.5f, 0.5f), 0);
-				p.lifetime = 10;
-				p.from_color = V4(0, 1, 0, 1);
-				p.to_color = V4(0, 1, 0, 1);
-				p.linear_velocity = V2(0, 0);
-				p.scale = V2(0.1f, 0.1f);
-				p.gravity = GRAVITY/150.0f;
-				add_particle(&particle_system, p);
-			}
-
-			if (pressed("jump")) 
-			{
-				for (int i = 0; i < 15; i++)
-				{
-					Particle p = {};
-					p.position = player->body_id->position;
-					p.lifetime = 1.5f;
-					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
-					p.to_color = V4(1, 1, 1, 0);
-					p.angular_velocity = random_real_in_range(&rnd, 0.0f, 1.0f);
-					p.linear_velocity = random_vec2(&rnd, V2(-0.8f, 0.0f), V2(0.8f, 0.6f));
-					p.scale = V2(0.7f, 0.7f);
-					add_particle(&particle_system, p);
-				}
-			}
-
-			if (player->grounded && (value("left") || value("right")))
-			{
-				Particle p = {};
-				p.position = player->body_id->position;
-				p.lifetime = 2;
-				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
-				p.to_color = V4(1, 1, 1, 0);
-				p.angular_velocity = random_real_in_range(&rnd, 0.0f, 1.0f);
-				p.linear_velocity = random_vec2(&rnd, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
-				p.scale = V2(0.7f, 0.7f);
-				add_particle(&particle_system, p);
-			}
-
 			update_particles(&particle_system, game.clock.delta);
 			player_update(player, game.clock.delta);
-			update_shots(&shots, game.clock.delta);
-			update_jellos(&jellos, game.clock.delta);
+			update_shots(&level.shots, game.clock.delta);
+			update_jellos(&level.jellos, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
-				player_shoot(player, &shots, &jellos);
+				player_shoot(player, &level.shots, &level.jellos);
+			}
+
+			// Check if we died
+			if (player->body_id->position.y < -100) {
+				player_respawn(player);
 			}
 
             enemy_update(enemy, game.clock.delta);
 			
 			// Physics update.
 			update_world(game.clock.delta);
+			if (player != level.player)
+				continue;
 		}
 
 		// Draw
@@ -364,11 +306,14 @@ void run()
 			// Start a new frame
 			frame(game.clock);
 
+			draw_end(level.end);
+
 			draw_particles(&particle_system);
 			player_draw(player);
 			enemy_draw(enemy);
-			shots_draw(&shots);
-			pickups_draw(&pickups);
+			shots_draw(&level.shots);
+			pickups_draw(&level.pickups);
+			jellos_draw(&level.jellos);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
