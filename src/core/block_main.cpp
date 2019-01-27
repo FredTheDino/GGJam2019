@@ -110,7 +110,7 @@ void initalize_libraries()
 	want.freq = AUDIO_FREQ;
 	want.format = AUDIO_F32;
 	want.channels = 2;
-	want.samples = 4096;
+	want.samples = 1024;
 	want.callback = audio_loop;
 	// TODO: This might need to be switchable
 	game.device = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0); 

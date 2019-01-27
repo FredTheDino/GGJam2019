@@ -4,6 +4,7 @@ AssetID spritesheet;
 AssetID audio_pew;
 AssetID audio_splat;
 AssetID audio_pickup;
+AssetID audio_hop;
 
 void load_assets() {
     // Textures
@@ -14,4 +15,5 @@ void load_assets() {
     audio_pew   = load_asset(AFT_SOUND,     "res/sound/pew_alt_mono.wav");
     audio_splat = load_asset(AFT_SOUND,     "res/sound/splat_mono.wav");
     audio_pickup= load_asset(AFT_SOUND,     "res/sound/pickup_mono.wav");
+    audio_hop   = load_asset(AFT_SOUND,     "res/sound/hop_mono.wav");
 }

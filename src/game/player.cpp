@@ -101,6 +101,7 @@ void player_update(Player *player, f32 delta)
 		vel.y = PLAYER_JUMP_SPEED;
 		player->jumped = true;
 		player->kayotee_time = MAX_KAYOTEE_TIME;
+        play_sound(audio_hop, 0.3, 1);
 	}
 
 	player->kayotee_time += delta;
