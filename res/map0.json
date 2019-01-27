@@ -222,6 +222,18 @@
                  "width":0,
                  "x":136,
                  "y":-56
+                }, 
+                {
+                 "height":0,
+                 "id":51,
+                 "name":"kill",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":-64,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -300,7 +312,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":51,
+ "nextobjectid":53,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.2.1",
