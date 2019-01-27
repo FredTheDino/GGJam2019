@@ -7,7 +7,7 @@
 
 struct Enemy {
     BodyID body_id;
-    u32 hp;
+    s32 hp;
     s32 facing;
 	bool crying;
 	f32 animation_timer;
@@ -20,20 +20,20 @@ bool enemy_callback(Body *self, Body *other, Overlap overlap)
     Enemy *enemy = (Enemy *) self->self;
     if (other->type == SHOT_TYPE) {
 	Shot *shot = (Shot *) other->self;
-    if (shot->shot_kind == ONION) {
-        enemy->crying = true;
-    }
-	destroy_shot(shot);
-	enemy->hp--;
-	if (enemy->hp <= 0) {
-            destroy_enemy(enemy);
-	}
-	return 1;
+        if (shot->shot_kind == ONION) {
+            enemy->crying = true;
+        }
+        if (shot->shot_kind != JELLO) {
+	        enemy->hp--;
+        }
+	    return 1;
     } else if (other->inverse_mass == 0) {
-	s32 dir = overlap.normal.x;
-	if (dir)
-		enemy->facing = -dir;
-	return 0;
+	    s32 dir = overlap.normal.x;
+	    if (dir)
+		    enemy->facing = -dir;
+	    return 0;
+    } else if (other->type == PLAYER_TYPE) {
+        player_respawn((Player *) other->self);
     }
     return 0;
 }
@@ -43,7 +43,7 @@ Enemy *create_enemy(List<Enemy*> *enemies, Vec2 position)
 {
     Enemy *enemy = push_struct(Enemy);
     enemy->facing = 1;
-    enemy->body_id = create_body(0x2, 1, 0);
+    enemy->body_id = create_body(0xFF, 1, 0);
     enemy->body_id->self = enemy;
     enemy->body_id->position = position;
     enemy->body_id->overlap = enemy_callback;
@@ -78,13 +78,14 @@ void destroy_enemy(Enemy *enemy)
     pop_memory(enemy);
 }
 
-void enemy_update(Enemy *enemy, f32 delta)
+bool enemy_update(Enemy *enemy, f32 delta)
 {
     BodyID body_id = enemy->body_id;
     Vec2 *vel = &body_id->velocity;
     vel->y -= GRAVITY * delta;
     vel->x = ENEMY_MAX_SPEED * enemy->facing;
     enemy->animation_timer += delta;
+    return enemy->hp <= 0;
 }
 
 void enemies_draw (List<Enemy*> *enemies) 
@@ -101,7 +102,11 @@ void update_enemies (List<Enemy*> *enemies, f32 delta)
 	for (s32 i = enemies->length-1; i >= 0; i--) 
 	{
 		Enemy *enemy = (*enemies)[i]; 
-		enemy_update(enemy, delta);
+		bool is_dead = enemy_update(enemy, delta);
+        if (is_dead) {
+            destroy_enemy(enemy);
+            enemies->remove(i);
+        }
 	}
 }
 
