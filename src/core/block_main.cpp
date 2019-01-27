@@ -73,6 +73,7 @@ u32 deaths = 0;
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
 #include "../game/kill_floor.cpp"
+#include "../game/enemy.cpp"
 #include "../game/level_loader.cpp"
 #include "../game/particles.cpp"
 
@@ -174,8 +175,13 @@ void run()
 
 	load_assets();
 
+	//List<Shot*> shots = create_list<Shot*>(5); 
+	//List<Jello*> jellos = create_list<Jello*>(20); 
+	//List<Pickup*> pickups = create_list<Pickup*>(10); 
+
 	Level level = {};
-	level_load("res/tut0.json", &level);
+	level_load("res/simple.json", &level);
+
 
 	// 
 	// Graphcis
@@ -206,9 +212,9 @@ void run()
 	add_binding(input, CBUTTON(X), "camera_shake");
 
 	add_input(input, "right");
-	add_binding(input, KEY(d),  1, "right");
+	add_binding(input, KEY(RIGHT),  1, "right");
 	add_input(input, "left");
-	add_binding(input, KEY(a), -1, "left");
+	add_binding(input, KEY(LEFT), -1, "left");
 
 	add_input(input, "y-move");
 	add_binding(input, KEY(w), -1, "y-move");
@@ -273,6 +279,7 @@ void run()
 			player_update(player, game.clock.delta);
 			update_shots(&level.shots, game.clock.delta);
 			update_jellos(&level.jellos, game.clock.delta);
+			update_enemies(&level.enemies, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
@@ -303,19 +310,19 @@ void run()
 			pickups_draw(&level.pickups);
 			jellos_draw(&level.jellos);
 			killfloors_draw(&level.killfloors);
-			
-			debug_line(V2(1, 1), V2(-1, -1));
-			debug_line(V2(-1, 1), V2(1, -1));
+			enemies_draw(&level.enemies);
 
 			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
+#if 0
 			if (value("show") || false)
 			{
 				debug_draw_world();
 				// Draw debug primitives.
 				debug_draw();
 			}
+#endif
 
 			// Tell SDL to update the graphics.
 			SDL_GL_SwapWindow(game.window);
