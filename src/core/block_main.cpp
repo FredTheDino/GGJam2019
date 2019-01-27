@@ -73,6 +73,7 @@ u32 deaths = 0;
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
 #include "../game/kill_floor.cpp"
+#include "../game/enemy.cpp"
 #include "../game/level_loader.cpp"
 #include "../game/particles.cpp"
 
@@ -174,8 +175,15 @@ void run()
 
 	load_assets();
 
+	//List<Shot*> shots = create_list<Shot*>(5); 
+	//List<Jello*> jellos = create_list<Jello*>(20); 
+	//List<Pickup*> pickups = create_list<Pickup*>(10); 
+
 	Level level = {};
 	level_load("res/map1.json", &level);
+
+	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
+	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
 
 	// 
 	// Graphcis
@@ -273,6 +281,7 @@ void run()
 			player_update(player, game.clock.delta);
 			update_shots(&level.shots, game.clock.delta);
 			update_jellos(&level.jellos, game.clock.delta);
+			update_enemies(&level.enemies, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
@@ -303,6 +312,7 @@ void run()
 			pickups_draw(&level.pickups);
 			jellos_draw(&level.jellos);
 			killfloors_draw(&level.killfloors);
+			enemies_draw(&level.enemies);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
