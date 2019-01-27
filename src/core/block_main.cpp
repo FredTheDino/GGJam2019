@@ -171,6 +171,7 @@ void run()
 
 	Level level;
 	Player *player = level_load("res/map2.json", &level);
+	Vec2 start_pos = player->body_id->position;
 
 	// 
 	// Graphcis
@@ -270,6 +271,12 @@ void run()
 			// Handle input
 			if (pressed("shoot")) {
 				player_shoot(player, &level.shots, &level.jellos);
+			}
+
+			// Check if we died
+			if (player->body_id->position.y < -100) {
+				player->body_id->position = start_pos;
+				player->body_id->velocity = V2(0,0);
 			}
 			
 			// Physics update.
