@@ -175,13 +175,8 @@ void run()
 
 	load_assets();
 
-	//List<Shot*> shots = create_list<Shot*>(5); 
-	//List<Jello*> jellos = create_list<Jello*>(20); 
-	//List<Pickup*> pickups = create_list<Pickup*>(10); 
-
 	Level level = {};
 	level_load("res/simple.json", &level);
-
 
 	// 
 	// Graphcis
@@ -290,7 +285,7 @@ void run()
 			if (player->body_id->position.y < -100) {
 				player_respawn(player);
 			}
-			
+
 			// Physics update.
 			update_world(game.clock.delta);
 			if (player != level.player)
