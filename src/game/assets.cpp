@@ -1,3 +1,5 @@
+#define RES_AUDIO "res/sound/"
+
 
 AssetID pixel;
 AssetID spritesheet;
@@ -5,6 +7,7 @@ AssetID audio_pew;
 AssetID audio_splat;
 AssetID audio_pickup;
 AssetID audio_hop;
+AssetID audio_death;
 
 #define SPRITE(id) generate_sprite(id, 32, 32)
 
@@ -23,8 +26,9 @@ void load_assets() {
 	spritesheet = load_asset(AFT_TEXTURE,   "res/sprite_sheet.png");
     
     // Audio
-    audio_pew   = load_asset(AFT_SOUND,     "res/sound/pew_alt_mono.wav");
-    audio_splat = load_asset(AFT_SOUND,     "res/sound/splat_mono.wav");
-    audio_pickup= load_asset(AFT_SOUND,     "res/sound/pickup_mono.wav");
-    audio_hop   = load_asset(AFT_SOUND,     "res/sound/hop_mono.wav");
+    audio_pew   = load_asset(AFT_SOUND,     RES_AUDIO "pew_alt_mono.wav");
+    audio_splat = load_asset(AFT_SOUND,     RES_AUDIO "splat_mono.wav");
+    audio_pickup= load_asset(AFT_SOUND,     RES_AUDIO "pickup_mono.wav");
+    audio_hop   = load_asset(AFT_SOUND,     RES_AUDIO "hop_mono.wav");
+    audio_death = load_asset(AFT_SOUND,     RES_AUDIO "deth_short_mono.wav");
 }
