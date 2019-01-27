@@ -3,7 +3,7 @@
 #define PLAYER_DEACCELERATION 40.0f
 #define PLAYER_MAX_SPEED 5
 #define PLAYER_JUMP_SPEED 8
-#define PLAYER_JUMP_TIME 0.6f
+#define PLAYER_JUMP_TIME 0.2f
 #define PLAYER_SHOT_DELAY 0.3f
 #define MAX_KAYOTEE_TIME 1.0f
 #define ANIMATION_TIME 0.5f
@@ -78,7 +78,7 @@ void player_update(Player *player, f32 delta)
 	//
 	// Update gravity
 	//
-	vel.y -= GRAVITY * delta;
+	vel.y -= 2 * GRAVITY * delta;
 
 	f32 acc_direction = value("right") + value("left");
 	if (acc_direction) {
@@ -129,7 +129,7 @@ void player_update(Player *player, f32 delta)
 
 	if (down("jump") && player->jump_timer < PLAYER_JUMP_TIME)
 	{
-		vel.y += PLAYER_JUMP_SPEED * delta;
+		vel.y = PLAYER_JUMP_SPEED;
 	}
 	player->jump_timer += delta;
 
