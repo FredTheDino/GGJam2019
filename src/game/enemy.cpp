@@ -20,6 +20,9 @@ bool enemy_callback(Body *self, Body *other, Overlap overlap)
     Enemy *enemy = (Enemy *) self->self;
     if (other->type == SHOT_TYPE) {
 	Shot *shot = (Shot *) other->self;
+    if (shot->shot_kind == ONION) {
+        enemy->crying = true;
+    }
 	destroy_shot(shot);
 	enemy->hp--;
 	if (enemy->hp <= 0) {
