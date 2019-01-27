@@ -171,7 +171,7 @@ void run()
 
 	Level level;
 	Player *player = level_load("res/map2.json", &level);
-	Vec2 start_pos = player->body_id->position;
+	player->respawn_pos = player->body_id->position;
 
 	// 
 	// Graphcis
@@ -275,8 +275,7 @@ void run()
 
 			// Check if we died
 			if (player->body_id->position.y < -100) {
-				player->body_id->position = start_pos;
-				player->body_id->velocity = V2(0,0);
+				player_respawn(player);
 			}
 			
 			// Physics update.
