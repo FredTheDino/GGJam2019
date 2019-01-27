@@ -43,7 +43,7 @@ bool player_callback(Body *self, Body *other, Overlap overlap)
 Player *create_player()
 {
 	Player *player = push_struct(Player);
-	player->body_id = create_body(0xff, 1, 0);
+	player->body_id = create_body(0x1, 1, 0);
 	player->body_id->self = player;
 	player->body_id->overlap = player_callback;
 	player->body_id->scale = V2(1,1);

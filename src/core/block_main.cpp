@@ -175,10 +175,10 @@ void run()
 
 	Level level;
 	Player *player = level_load("res/map0.json", &level);
-	Enemy *enemy = create_enemy(player->body_id->position + V2(2, 0));
+	Enemy *enemy = create_enemy(player->body_id->position + V2(2, 1));
 
 	pickups.append(create_pickup(&pickups, player->body_id->position + V2(10, 0), CARROT));
-	pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
+	//pickups.append(create_pickup(&pickups, player->body_id->position + V2(3, 0), JELLO));
 
 	// 
 	// Graphcis
@@ -352,6 +352,8 @@ void run()
 			if (pressed("shoot")) {
 				player_shoot(player, &shots, &jellos);
 			}
+
+            enemy_update(enemy, game.clock.delta);
 			
 			// Physics update.
 			update_world(game.clock.delta);
