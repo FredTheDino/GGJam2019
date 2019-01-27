@@ -81,8 +81,7 @@ void jellos_draw (List<Jello*> *jellos)
 {
 	for (u32 i = 0; i < jellos->length; i++) 
 	{
-		Texture texture = find_asset(pixel).texture;
 		BodyID body_id = (*jellos)[i]->body_id;
-		draw_sprite(texture, body_id->position, body_id->scale, 0);
+		draw_sprite(32*3+1, body_id->position, V2(1.0f, 0.5f));
 	}
 }

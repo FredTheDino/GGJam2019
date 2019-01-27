@@ -29,6 +29,10 @@ bool player_callback(Body *self, Body *other, Overlap overlap)
 
 	if (dot(-overlap.normal, V2(0, 1)) > 0.8)
 	{
+		if (player->kayotee_time != 0.0f)
+		{
+			shake_camera(0.05f);
+		}
 		player->jumped = false;
 		player->grounded = true;
 		player->bounced = false;
@@ -86,11 +90,18 @@ void player_update(Player *player, f32 delta)
 			player->face_direction = 1;
 		}
 	}
+
+	if (player->grounded && acc_direction)
+	{
+		movement_particles(player);
+	}
+
 	vel.x = clamp((f32) -PLAYER_MAX_SPEED, (f32) PLAYER_MAX_SPEED, vel.x);
 
 	//
 	// Jumping 
 	//
+	player->kayotee_time += delta;
 	if (player->grounded)
 	{
 		player->kayotee_time = 0;
@@ -98,14 +109,18 @@ void player_update(Player *player, f32 delta)
 
 	if (player->kayotee_time < MAX_KAYOTEE_TIME && pressed("jump")) 
 	{
+		shake_camera(0.01f);
 		vel.y = PLAYER_JUMP_SPEED;
 		player->jumped = true;
 		player->kayotee_time = MAX_KAYOTEE_TIME;
         play_sound(audio_hop, 0.3, 1);
+		jump_particles(player);
 	}
-
-	player->kayotee_time += delta;
 	player->grounded = false;
+
+	if (player->bounced)
+		bounce_particles(player);
+
 
 	body->velocity = vel;
 
@@ -115,12 +130,15 @@ void player_update(Player *player, f32 delta)
 	player->shot_time += delta;
 
 	game.camera->position = body->position;
+
 }
+
 
 void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos) 
 {
 	if (player->shot_time > PLAYER_SHOT_DELAY)
 	{
+		shake_camera(0.2f);
 		shots->append(create_shot(player, player->weapon, player->face_direction, jellos));
 		player->shot_time = 0;
 	}
@@ -128,8 +146,7 @@ void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos)
 
 void player_draw(Player *player) 
 {
-	Texture texture = find_asset(pixel).texture;
-	draw_sprite(texture, player->body_id->position, player->body_id->scale, 0);
+	draw_sprite(64, player->body_id->position);
 }
 
 void player_change_weapon(Player *player, ShotKind weapon) {

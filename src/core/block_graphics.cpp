@@ -33,8 +33,16 @@ void destroy_graphics(Context *gfx)
 	glDeleteProgram(gfx->vertex_buffer);
 }
 
+void shake_camera(f32 shake)
+{
+	game.camera->shake_timer += shake;
+}
+
 void frame(Context *gfx, Camera *camera, Clock clock)
 {
+	// Disabled the debug draw.
+	debug_context.num_debug_lines = 0;
+	debug_context.num_debug_points = 0;
 	// TODO: This is slow, we should have a global context
 	// which caches the current state so we don't have to set 
 	// it. But it's marginal.

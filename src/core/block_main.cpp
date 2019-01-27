@@ -60,16 +60,16 @@
 #include "block_physics.cpp"
 
 #include "../game/assets.cpp"
-ParticleSystem particle_system = create_particle_system(pixel);
-RandomState rnd = seed(4);
 
 #include "../game/shoot.h"
 #include "../game/jello.h"
+#include "../game/particles.h"
 #include "../game/player.cpp"
 #include "../game/shoot.cpp"
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
 #include "../game/level_loader.cpp"
+#include "../game/particles.cpp"
 
 void initalize_libraries()
 {
@@ -152,6 +152,7 @@ void run()
 	PhysicsWorld physics_world = initalize_world();
 	game.world = &physics_world;
 
+	particle_system = create_particle_system(pixel);
 
 	{ 
 		List<Vec2> points = create_list<Vec2>(4);
@@ -246,99 +247,26 @@ void run()
 
 		// Update
 		{
-			snow_time += game.clock.delta;
-			if (snow_time > 0.20) {
-				snow_time = 0;
-				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -10.0f, 10.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
-				p.lifetime = 60;
-				p.from_color = V4(1, 1, 1, 0.8f);
-				p.to_color = V4(1, 1, 1, 0.8f);
-				p.scale = V2(0.1f, 0.1f);
-				p.is_sine = true;
-				p.gravity = GRAVITY/5000.0f;
-				add_particle(&particle_system, p);
+			// Snow particles
+			{
+				snow_time += game.clock.delta;
+				if (snow_time > 0.20) {
+					snow_time = 0;
+					Particle p = {};
+					p.position = player->body_id->position + V2(random_real_in_range(&rnd, -10.0f, 10.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
+					p.lifetime = 60;
+					p.from_color = V4(1, 1, 1, 0.8f);
+					p.to_color = V4(1, 1, 1, 0.8f);
+					p.scale = V2(0.1f, 0.1f);
+					p.is_sine = true;
+					p.gravity = GRAVITY/5000.0f;
+					add_particle(&particle_system, p);
+				}
 			}
 
 			if (pressed("quit")) 
 			{
 				game.running = 0;
-			}
-
-			if (pressed("shoot"))
-			{
-				for (int i = 0; i < 20; i++)
-				{
-					Particle p = {};
-					if (player->face_direction > 0)
-					{
-						p.position = player->body_id->position + V2(0.5f, 0);
-					}
-					else
-					{
-						p.position = player->body_id->position + V2(-0.5f, 0);
-					}
-					p.lifetime = 1;
-					switch(player->weapon)
-					{
-						case JELLO: 
-							p.from_color = V4(0, 1, 0, 0.5f);
-							break;
-						case CARROT:
-							p.from_color = V4(0.98f, 0.61f, 0.12f, 0.5f);
-							break;
-						case ONION: 
-							p.from_color = V4(0.8f, 0.6f, 0, 0.5f);
-							break;
-					}
-					p.to_color = V4(0, 0, 0, 0);
-					p.angular_velocity = random_real_in_range(&rnd, -1.0f, 1.0f);
-					p.linear_velocity = random_vec2(&rnd, V2(-0.5f, -0.5f), V2(0.5f, 0.5f));
-					p.scale = V2(0.2f, 0.2f);
-					add_particle(&particle_system, p);
-				}
-			}
-
-			if (player->bounced)
-			{
-				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -0.5f, 0.5f), 0);
-				p.lifetime = 10;
-				p.from_color = V4(0, 1, 0, 1);
-				p.to_color = V4(0, 1, 0, 1);
-				p.linear_velocity = V2(0, 0);
-				p.scale = V2(0.1f, 0.1f);
-				p.gravity = GRAVITY/150.0f;
-				add_particle(&particle_system, p);
-			}
-
-			if (pressed("jump")) 
-			{
-				for (int i = 0; i < 15; i++)
-				{
-					Particle p = {};
-					p.position = player->body_id->position;
-					p.lifetime = 1.5f;
-					p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
-					p.to_color = V4(1, 1, 1, 0);
-					p.angular_velocity = random_real_in_range(&rnd, 0.0f, 1.0f);
-					p.linear_velocity = random_vec2(&rnd, V2(-0.8f, 0.0f), V2(0.8f, 0.6f));
-					p.scale = V2(0.7f, 0.7f);
-					add_particle(&particle_system, p);
-				}
-			}
-
-			if (player->grounded && (value("left") || value("right")))
-			{
-				Particle p = {};
-				p.position = player->body_id->position;
-				p.lifetime = 2;
-				p.from_color = V4(0.59f, 0.43f, 0.25f, 0.5f);
-				p.to_color = V4(1, 1, 1, 0);
-				p.angular_velocity = random_real_in_range(&rnd, 0.0f, 1.0f);
-				p.linear_velocity = random_vec2(&rnd, V2(-0.0f, 0.0f), V2(0.8f, 0.6f));
-				p.scale = V2(0.7f, 0.7f);
-				add_particle(&particle_system, p);
 			}
 
 			update_particles(&particle_system, game.clock.delta);
@@ -364,6 +292,7 @@ void run()
 			player_draw(player);
 			shots_draw(&shots);
 			pickups_draw(&pickups);
+			jellos_draw(&jellos);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
@@ -371,9 +300,12 @@ void run()
 			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
-			debug_draw_world();
-			// Draw debug primitives.
-			debug_draw();
+			if (value("show"))
+			{
+				debug_draw_world();
+				// Draw debug primitives.
+				debug_draw();
+			}
 
 			// Tell SDL to update the graphics.
 			SDL_GL_SwapWindow(game.window);

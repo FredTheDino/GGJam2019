@@ -50,9 +50,13 @@ Context initalize_graphics(AssetID id);
 // Free the graphics API
 void destroy_graphics(Context *gfx);
 
+
 //
 // Drawing 
 //
+
+// Shake the camera by some ammount.
+void shake_camera(f32 shake);
 
 // Start a new frame
 void frame(Context *gfx, Clock clock, Camera *camera);
@@ -72,6 +76,16 @@ void draw_sprite(Texture texture,
 		Vec2 position, Vec2 scale, f32 rotation, Vec4 tint=V4(1, 1, 1, 1));
 
 void draw_text(AssetID font_id, const char *text, Vec2 position, f32 size, Vec4 color, f32 width=0.5f, f32 edge=0.15f);
+
+Rect generate_sprite(u32 id, u32 tiles_x, u32 tiles_y)
+{
+	f32 w = (1.0f / (f32) tiles_x);
+	f32 h = (1.0f / (f32) tiles_y);
+	f32 u = (id % tiles_x) * w;
+	f32 v = (id / tiles_y) * h;
+	Rect rect = {u, v, w, h};
+	return rect;
+}
 
 //
 // Debug

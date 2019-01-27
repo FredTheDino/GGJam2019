@@ -88,8 +88,18 @@ typedef f32 real;
 
 struct Rect
 {
-	Vec2 min;
-	Vec2 dim;
+	union
+	{
+		struct
+		{
+			Vec2 min;
+			Vec2 dim;
+		};
+		struct
+		{
+			real x, y, w, h;
+		};
+	};
 };
 
 Rect R(f32 x, f32 y, f32 w, f32 h)
