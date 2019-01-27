@@ -171,7 +171,7 @@ void run()
 	load_assets();
 
 	Level level = {};
-	level_load("res/simple.json", &level);
+	level_load("res/map2.json", &level);
 	level.player->respawn_pos = level.player->body_id->position;
 
 	// 
