@@ -215,9 +215,9 @@ void run()
 	add_binding(input, CBUTTON(X), "camera_shake");
 
 	add_input(input, "right");
-	add_binding(input, KEY(d),  1, "right");
+	add_binding(input, KEY(RIGHT),  1, "right");
 	add_input(input, "left");
-	add_binding(input, KEY(a), -1, "left");
+	add_binding(input, KEY(LEFT), -1, "left");
 
 	add_input(input, "y-move");
 	add_binding(input, KEY(w), -1, "y-move");
