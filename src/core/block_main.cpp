@@ -170,7 +170,7 @@ void run()
 	load_assets();
 
 	Level level;
-	Player *player = level_load("res/map1.json", &level);
+	Player *player = level_load("res/map2.json", &level);
 
 	// 
 	// Graphcis
