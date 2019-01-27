@@ -4,6 +4,7 @@
 #define PLAYER_JUMP_SPEED 7
 #define PLAYER_SHOT_DELAY 0.3f
 #define MAX_KAYOTEE_TIME 1.0f
+#define ANIMATION_TIME 0.5f
 
 struct Player {
 	// Body
@@ -16,6 +17,7 @@ struct Player {
 	bool grounded;
 	bool bounced;
 	f32 kayotee_time;
+	f32 animation_timer; 
 	// Direction
 	s32 face_direction;
 };
@@ -55,11 +57,14 @@ Player *create_player()
 	player->shot_time = 0;
 	player->weapon = JELLO;
 	player->face_direction = 1;
+	player->animation_timer = 0;
 	return player;
 }
 
 void player_update(Player *player, f32 delta) 
 {
+	player->animation_timer += delta;
+
 	Body *body = find_body_ptr(player->body_id);
 	//
 	// Movement
@@ -146,11 +151,33 @@ void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos)
 
 void player_draw(Player *player) 
 {
-	if (player->face_direction == 1) {
-		draw_sprite(64, player->body_id->position, hadamard(player->body_id->scale, V2(-1,1)));
+	int sprite_index = 65;
+	if (not player->grounded)
+	{
+		if (player->body_id->velocity.y > 0)
+		{
+			sprite_index = 67;
+		}
+		else
+		{
+			sprite_index = 66;
+		}
 	}
+	else if (player->body_id->velocity.x == 0)
+	{
+		sprite_index = 65;
+	}
+	else if ((s32)(player->animation_timer / ANIMATION_TIME) % 2 == 0)
+	{
+		sprite_index = 64;
+	}
+
+	if (player->face_direction == 1) {
+		draw_sprite(sprite_index, player->body_id->position, hadamard(player->body_id->scale, V2(-1,1)));
+	}
+
 	else {
-		draw_sprite(64, player->body_id->position);
+		draw_sprite(sprite_index, player->body_id->position);
 	}
 }
 
