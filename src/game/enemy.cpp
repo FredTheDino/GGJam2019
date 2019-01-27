@@ -23,14 +23,17 @@ bool enemy_callback(Body *self, Body *other, Overlap overlap)
         if (shot->shot_kind == ONION) {
             enemy->crying = true;
         }
-	    //destroy_shot(shot);
-	    enemy->hp--;
+        if (shot->shot_kind != JELLO) {
+	        enemy->hp--;
+        }
 	    return 1;
     } else if (other->inverse_mass == 0) {
 	    s32 dir = overlap.normal.x;
 	    if (dir)
 		    enemy->facing = -dir;
 	    return 0;
+    } else if (other->type == PLAYER_TYPE) {
+        player_respawn((Player *) other->self);
     }
     return 0;
 }
@@ -40,7 +43,7 @@ Enemy *create_enemy(List<Enemy*> *enemies, Vec2 position)
 {
     Enemy *enemy = push_struct(Enemy);
     enemy->facing = 1;
-    enemy->body_id = create_body(0x2, 1, 0);
+    enemy->body_id = create_body(0xFF, 1, 0);
     enemy->body_id->self = enemy;
     enemy->body_id->position = position;
     enemy->body_id->overlap = enemy_callback;
