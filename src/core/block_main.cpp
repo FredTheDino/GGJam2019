@@ -175,7 +175,7 @@ void run()
 	load_assets();
 
 	Level level = {};
-	level_load("res/map0.json", &level);
+	level_load("res/map1.json", &level);
 
 	// 
 	// Graphcis
