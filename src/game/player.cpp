@@ -146,7 +146,8 @@ void player_update(Player *player, f32 delta)
 	//
 	player->shot_time += delta;
 
-	game.camera->position = body->position;
+	Vec2 delta_pos = body->position - game.camera->position;
+	game.camera->position += delta_pos / 4.0f;
 
 }
 
