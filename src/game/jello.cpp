@@ -1,4 +1,4 @@
-#define BOUNCE_SPEED 15
+#define BOUNCE_SPEED 17
 
 bool jello_on_collision(Body *self, Body *other, Overlap overlap) 
 {
@@ -26,12 +26,12 @@ bool jello_on_collision(Body *self, Body *other, Overlap overlap)
 		{
 			Particle p = {};
 			p.position = pos;
-			p.lifetime = 10;
+			p.lifetime = 2;
 			p.from_color = V4(0, 1, 0, 1);
 			p.to_color = V4(0, 1, 0, 1);
-			p.linear_velocity = random_vec2(&rnd, V2(-1, 0.5f), V2(1, 1));
+			p.linear_velocity = random_vec2(&rnd, V2(-1, 2), V2(1, 4));
 			p.scale = V2(0.1f, 0.1f);
-			p.gravity = GRAVITY/900.0f;
+			p.gravity = GRAVITY/150.0f;
 			add_particle(&particle_system, p);
 		}
 	}
