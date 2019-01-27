@@ -158,7 +158,12 @@ void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos)
 
 void player_draw(Player *player) 
 {
-	draw_sprite(64, player->body_id->position);
+	if (player->face_direction == 1) {
+		draw_sprite(64, player->body_id->position, hadamard(player->body_id->scale, V2(-1,1)));
+	}
+	else {
+		draw_sprite(64, player->body_id->position);
+	}
 }
 
 void player_change_weapon(Player *player, ShotKind weapon) {

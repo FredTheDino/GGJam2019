@@ -3,7 +3,7 @@ bool shot_on_collision(Body *self, Body *other, Overlap overlap)
 	ASSERT(self->self);
     Shot *shot = (Shot *) self->self;
 
-	if (other->type == PICKUP_TYPE)
+	if (other->type == PICKUP_TYPE || other->type == PLAYER_TYPE)
 		return false;
 
 	if (shot->is_destroyed || other->type == JELLO_TYPE)
@@ -30,7 +30,7 @@ Shot *create_shot(Player *player, ShotKind shot_kind, s32 direction, List<Jello*
     BodyID body_id = create_body(0xFF, 1);
     body_id->velocity.x = direction * SHOT_SPEED;
 	body_id->position = player->body_id->position + V2(direction, 0);
-	body_id->scale = V2(0.5f, 0.5f);
+	body_id->scale = V2(1, 1);
 	body_id->overlap = shot_on_collision;
 	body_id->type = SHOT_TYPE;
     Shot *shot = push_struct(Shot);
@@ -54,9 +54,23 @@ void shots_draw (List<Shot*> *shots)
 {
 	for (u32 i = 0; i < shots->length; i++) 
 	{
-		Texture texture = find_asset(pixel).texture;
 		BodyID body_id = (*shots)[i]->body_id;
-		draw_sprite(texture, body_id->position, body_id->scale, 0);
+		int texture_id;
+		switch ((*shots)[i]->shot_kind) {
+			case JELLO:
+				texture_id = 96;
+				break;
+
+			case CARROT:
+				texture_id = 100;
+				break;
+
+			case ONION:
+				texture_id = 98;
+				break;
+		}
+
+		draw_sprite(texture_id, body_id->position, body_id->scale, -angle(body_id->velocity));
 	}
 }
 

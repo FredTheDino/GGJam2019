@@ -40,7 +40,6 @@ Player *level_load(const char *path, Level *level)
 		Vec2 dim = V2(objects[i]["width"], objects[i]["height"])
 			/ value["tilewidth"];
 		dim.y *= -1;
-		print("%s\n", objects[i]["name"].string.data);
 		if (objects[i]["name"].string.data[0] == 'p')
 		{
 			player->body_id->position = pos;
@@ -52,19 +51,16 @@ Player *level_load(const char *path, Level *level)
 		else if (objects[i]["name"].string.data[0] == 'c')
 		{
 			create_pickup(&level->pickups, pos, CARROT);
-			print("Carrot spawn\n");
 
 		}
 		else if (objects[i]["name"].string.data[0] == 'j')
 		{
 			create_pickup(&level->pickups, pos, JELLO);
-			print("Jello spawn\n");
 
 		}
 		else if (objects[i]["name"].string.data[0] == 'o')
 		{
 			create_pickup(&level->pickups, pos, ONION);
-			print("Onion spawn\n");
 		}
 		else
 		{

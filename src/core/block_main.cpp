@@ -170,7 +170,7 @@ void run()
 	load_assets();
 
 	Level level;
-	Player *player = level_load("res/simple.json", &level);
+	Player *player = level_load("res/map1.json", &level);
 
 	// 
 	// Graphcis
@@ -243,10 +243,10 @@ void run()
 			// Snow particles
 			{
 				snow_time += game.clock.delta;
-				if (snow_time > 0.20) {
+				if (snow_time > 0.10) {
 					snow_time = 0;
 					Particle p = {};
-					p.position = player->body_id->position + V2(random_real_in_range(&rnd, -10.0f, 10.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
+					p.position = player->body_id->position + V2(random_real_in_range(&rnd, -50.0f, 50.0f), random_real_in_range(&rnd, 10.0f, 30.0f));
 					p.lifetime = 60;
 					p.from_color = V4(1, 1, 1, 0.8f);
 					p.to_color = V4(1, 1, 1, 0.8f);
