@@ -54,7 +54,6 @@ void pickups_draw (List<Pickup*> *pickups)
 	{
 		Pickup *pickup = (*pickups)[i];
 		BodyID body_id = pickup->body_id;
-		print("%f, %f\n", body_id->position.x, body_id->position.y);
 		u32 sprite = 97 + (pickup->weapon * 2);
 		draw_sprite(sprite, body_id->position, body_id->scale, 0);
 	}
