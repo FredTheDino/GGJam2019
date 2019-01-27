@@ -15,7 +15,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":34.9879173006355,
+                 "x":16,
                  "y":0
                 }, 
                 {
@@ -38,8 +38,26 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":58.3549628568871,
-                 "y":-0.358005907097468
+                 "x":40,
+                 "y":0
+                }, 
+                {
+                 "height":0,
+                 "id":22,
+                 "name":"end",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"next",
+                         "type":"string",
+                         "value":"res\/map0.json"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":72,
+                 "y":0
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -76,7 +94,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":22,
+ "nextobjectid":23,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.2.1",

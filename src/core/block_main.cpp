@@ -61,6 +61,7 @@
 
 #include "../game/assets.cpp"
 
+#include "../game/end.cpp"
 #include "../game/shoot.h"
 #include "../game/jello.h"
 #include "../game/particles.h"
@@ -169,9 +170,9 @@ void run()
 
 	load_assets();
 
-	Level level;
-	Player *player = level_load("res/map2.json", &level);
-	player->respawn_pos = player->body_id->position;
+	Level level = {};
+	level_load("res/simple.json", &level);
+	level.player->respawn_pos = level.player->body_id->position;
 
 	// 
 	// Graphcis
@@ -231,6 +232,8 @@ void run()
 	game.running = 1;
 	while (game.running)
 	{
+		Player *player = level.player;
+
 		swap_temp_memory();
 		update_game_clock(&game.clock);
 		//count_fps();
@@ -280,12 +283,16 @@ void run()
 			
 			// Physics update.
 			update_world(game.clock.delta);
+			if (player != level.player)
+				continue;
 		}
 
 		// Draw
 		{
 			// Start a new frame
 			frame(game.clock);
+
+			draw_end(level.end);
 
 			draw_particles(&particle_system);
 			player_draw(player);
