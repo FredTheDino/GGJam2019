@@ -56,3 +56,16 @@ void movement_particles(Player *player)
 	p.scale = V2(0.7f, 0.7f);
 	add_particle(&particle_system, p);
 }
+
+void bounce_particles(Player *player)
+{
+	Particle p = {};
+	p.position = player->body_id->position + V2(random_real_in_range(&rnd, -0.5f, 0.5f), 0);
+	p.lifetime = 2;
+	p.from_color = V4(0, 1, 0, 1);
+	p.to_color = V4(0, 1, 0, 1);
+	p.linear_velocity = V2(0, 0);
+	p.scale = V2(0.1f, 0.1f);
+	p.gravity = GRAVITY/150.0f;
+	add_particle(&particle_system, p);
+}

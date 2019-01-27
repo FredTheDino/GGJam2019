@@ -117,6 +117,9 @@ void player_update(Player *player, f32 delta)
 	}
 	player->grounded = false;
 
+	if (player->bounced)
+		bounce_particles(player);
+
 
 	body->velocity = vel;
 
@@ -128,6 +131,7 @@ void player_update(Player *player, f32 delta)
 	game.camera->position = body->position;
 
 }
+
 
 void player_shoot(Player *player, List<Shot*> *shots, List<Jello*> *jellos) 
 {

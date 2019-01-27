@@ -269,24 +269,6 @@ void run()
 				game.running = 0;
 			}
 
-			if (pressed("shoot"))
-			{
-			}
-
-			if (player->bounced)
-			{
-				Particle p = {};
-				p.position = player->body_id->position + V2(random_real_in_range(&rnd, -0.5f, 0.5f), 0);
-				p.lifetime = 10;
-				p.from_color = V4(0, 1, 0, 1);
-				p.to_color = V4(0, 1, 0, 1);
-				p.linear_velocity = V2(0, 0);
-				p.scale = V2(0.1f, 0.1f);
-				p.gravity = GRAVITY/150.0f;
-				add_particle(&particle_system, p);
-			}
-
-
 			update_particles(&particle_system, game.clock.delta);
 			player_update(player, game.clock.delta);
 			update_shots(&shots, game.clock.delta);
@@ -310,6 +292,7 @@ void run()
 			player_draw(player);
 			shots_draw(&shots);
 			pickups_draw(&pickups);
+			jellos_draw(&jellos);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
