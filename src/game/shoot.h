@@ -4,8 +4,8 @@
 
 enum ShotKind {
     JELLO,
-    CARROT,
-    ONION
+    ONION,
+    CARROT
 };
 
 struct Jello;

@@ -1,4 +1,4 @@
-#define BOUNCE_SPEED 20
+#define BOUNCE_SPEED 15
 
 bool jello_on_collision(Body *self, Body *other, Overlap overlap) 
 {

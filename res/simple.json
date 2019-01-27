@@ -15,7 +15,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":40,
+                 "x":34.9879173006355,
                  "y":0
                 }, 
                 {
@@ -28,6 +28,18 @@
                  "width":88,
                  "x":0,
                  "y":5
+                }, 
+                {
+                 "height":0,
+                 "id":21,
+                 "name":"jello-spawner",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":58.3549628568871,
+                 "y":-0.358005907097468
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -64,7 +76,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":19,
+ "nextobjectid":22,
  "orientation":"orthogonal",
  "renderorder":"left-down",
  "tiledversion":"1.2.1",
