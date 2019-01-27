@@ -37,6 +37,7 @@ Pickup *create_pickup (List<Pickup*> *pickups, Vec2 position, ShotKind weapon)
 	pickup->weapon = weapon;
     pickup->can_play_sound = true;
 	body_id->self = pickup;
+	pickups->append(pickup);
 	return pickup;
 }
 
@@ -51,8 +52,10 @@ void pickups_draw (List<Pickup*> *pickups)
 {
 	for (u32 i = 0; i < pickups->length; i++) 
 	{
-		Texture texture = find_asset(pixel).texture;
-		BodyID body_id = (*pickups)[i]->body_id;
-		draw_sprite(texture, body_id->position, body_id->scale, 0);
+		Pickup *pickup = (*pickups)[i];
+		BodyID body_id = pickup->body_id;
+		print("%f, %f\n", body_id->position.x, body_id->position.y);
+		u32 sprite = 97 + (pickup->weapon * 2);
+		draw_sprite(sprite, body_id->position, body_id->scale, 0);
 	}
 }

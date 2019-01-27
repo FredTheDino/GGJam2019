@@ -164,7 +164,6 @@ BodyID new_body_id(PhysicsWorld *world)
 	}
 	ASSERT(id.pos >= 0);
 	world->bodies_highest = maximum((s32) world->bodies_highest, id.pos);
-	print("new body %d:%d\n", id.pos, id.uid);
 	return id;
 }
 BodyID new_body_id()

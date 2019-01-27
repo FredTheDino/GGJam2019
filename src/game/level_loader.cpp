@@ -9,6 +9,10 @@ struct Level
 {
 	List<BodyID> bodies;
 	TileMap map;
+
+	List<Shot*> shots;
+	List<Jello*> jellos;
+	List<Pickup*> pickups;
 };
 
 Player *level_load(const char *path, Level *level)
@@ -16,6 +20,10 @@ Player *level_load(const char *path, Level *level)
 	using namespace JSON;
 	// Player p = create_player();
 	Player *player = create_player();
+	level->shots = create_list<Shot*>(5); 
+
+	level->jellos = create_list<Jello*>(20); 
+	level->pickups = create_list<Pickup*>(10);
 	level->map = create_tilemap(spritesheet);
 	level->bodies = create_list<BodyID>(10);
 	const char *file = read_entire_file(path);
@@ -32,9 +40,27 @@ Player *level_load(const char *path, Level *level)
 		Vec2 dim = V2(objects[i]["width"], objects[i]["height"])
 			/ value["tilewidth"];
 		dim.y *= -1;
-		if (dim.x == 0 && dim.y == 0)
+		if (objects[i]["name"].string.data[0] == 'p')
 		{
 			player->body_id->position = pos;
+		}
+		else if (objects[i]["name"].string.data[0] == 't')
+		{
+			print("todo-spawn tbone\n");
+		}
+		else if (objects[i]["name"].string.data[0] == 'c')
+		{
+			create_pickup(&level->pickups, pos, CARROT);
+
+		}
+		else if (objects[i]["name"].string.data[0] == 'j')
+		{
+			create_pickup(&level->pickups, pos, JELLO);
+
+		}
+		else if (objects[i]["name"].string.data[0] == 'o')
+		{
+			create_pickup(&level->pickups, pos, ONION);
 		}
 		else
 		{
