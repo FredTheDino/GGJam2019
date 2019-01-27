@@ -175,7 +175,7 @@ void run()
 	load_assets();
 
 	Level level = {};
-	level_load("res/map2.json", &level);
+	level_load("res/tut0.json", &level);
 
 	// 
 	// Graphcis
@@ -302,6 +302,7 @@ void run()
 			shots_draw(&level.shots);
 			pickups_draw(&level.pickups);
 			jellos_draw(&level.jellos);
+			killfloors_draw(&level.killfloors);
 			
 			debug_line(V2(1, 1), V2(-1, -1));
 			debug_line(V2(-1, 1), V2(1, -1));
@@ -309,7 +310,7 @@ void run()
 			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
-			if (value("show"))
+			if (value("show") || false)
 			{
 				debug_draw_world();
 				// Draw debug primitives.

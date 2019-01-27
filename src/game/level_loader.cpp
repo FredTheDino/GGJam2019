@@ -85,7 +85,6 @@ void level_load(const char *path, Level *level)
 	const char *file = read_entire_file(path);
 	ASSERT(file);
 	Value value = parse_object(file);
-	Value tileset = value["tilesets"][(u32)0];
 
 	// Just assume the first layer is objects. (Smart.)
 	Value objects = value["layers"][(u32) 0]["objects"];
