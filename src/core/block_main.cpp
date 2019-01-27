@@ -73,8 +73,8 @@ u32 deaths = 0;
 #include "../game/jello.cpp"
 #include "../game/pickup.cpp"
 #include "../game/kill_floor.cpp"
-#include "../game/level_loader.cpp"
 #include "../game/enemy.cpp"
+#include "../game/level_loader.cpp"
 #include "../game/particles.cpp"
 
 void initalize_libraries()
@@ -180,9 +180,8 @@ void run()
 	//List<Pickup*> pickups = create_list<Pickup*>(10); 
 
 	Level level = {};
-	level_load("res/tut0.json", &level);
-	Enemy *enemy = create_enemy(level.player->body_id->position + V2(2, 1));
-
+	level_load("res/simple.json", &level);
+	//level_load("res/map2.json", &level);
 
 	// 
 	// Graphcis
@@ -280,6 +279,7 @@ void run()
 			player_update(player, game.clock.delta);
 			update_shots(&level.shots, game.clock.delta);
 			update_jellos(&level.jellos, game.clock.delta);
+			update_enemies(&level.enemies, game.clock.delta);
 
 			// Handle input
 			if (pressed("shoot")) {
@@ -291,8 +291,6 @@ void run()
 				player_respawn(player);
 			}
 
-            enemy_update(enemy, game.clock.delta);
-			
 			// Physics update.
 			update_world(game.clock.delta);
 			if (player != level.player)
@@ -308,19 +306,16 @@ void run()
 
 			draw_particles(&particle_system);
 			player_draw(player);
-			enemy_draw(enemy);
 			shots_draw(&level.shots);
 			pickups_draw(&level.pickups);
 			jellos_draw(&level.jellos);
 			killfloors_draw(&level.killfloors);
+			enemies_draw(&level.enemies);
 			
-			debug_line(V2(1, 1), V2(-1, -1));
-			debug_line(V2(-1, 1), V2(1, -1));
-
 			draw_tilemap(game.context, &level.map);
 
 			// Debug draw the physics
-			if (value("show") || false)
+			if (false)
 			{
 				debug_draw_world();
 				// Draw debug primitives.

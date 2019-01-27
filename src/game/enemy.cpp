@@ -36,7 +36,7 @@ bool enemy_callback(Body *self, Body *other, Overlap overlap)
 }
 
 
-Enemy *create_enemy(Vec2 position)
+Enemy *create_enemy(List<Enemy*> *enemies, Vec2 position)
 {
     Enemy *enemy = push_struct(Enemy);
     enemy->facing = 1;
@@ -48,6 +48,7 @@ Enemy *create_enemy(Vec2 position)
     enemy->hp = ENEMY_START_HP;
 	enemy->facing = 1;
 	enemy->animation_timer = 0;
+	enemies->append(enemy);
 
     return enemy;
 }
@@ -82,3 +83,22 @@ void enemy_update(Enemy *enemy, f32 delta)
     vel->x = ENEMY_MAX_SPEED * enemy->facing;
     enemy->animation_timer += delta;
 }
+
+void enemies_draw (List<Enemy*> *enemies) 
+{
+	for (u32 i = 0; i < enemies->length; i++) 
+	{
+		Enemy *enemy = (*enemies)[i]; 
+		enemy_draw(enemy);
+	}
+}
+
+void update_enemies (List<Enemy*> *enemies, f32 delta) 
+{
+	for (s32 i = enemies->length-1; i >= 0; i--) 
+	{
+		Enemy *enemy = (*enemies)[i]; 
+		enemy_update(enemy, delta);
+	}
+}
+
